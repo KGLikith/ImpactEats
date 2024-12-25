@@ -14,7 +14,7 @@ type Props = {
 };
 
 export default function OrganisationPage({ user }: Props) {
-    const [userType, setUserType] = React.useState<UserTypeInfo>();
+  const [userType, setUserType] = React.useState<UserTypeInfo>();
   const { userType: currentUserType, isLoading } = useGetUserTypeInfo(
     user.id,
     user.type
@@ -46,15 +46,15 @@ export default function OrganisationPage({ user }: Props) {
     );
   }
   return (
-    <div className="flex gap-6">
-      <div className="flex gap-6 flex-col flex-1">
+    <div className="flex gap-6 ">
+      <div className="flex gap-6 flex-col flex-1 justify-start">
         <ProfilePicture
           userImage={user.imageUrl || ""}
           id={user.id}
           type={user.type}
         />
-        <div className="flex flex-col gap-6">
-          <div className="grid w-full max-w-sm items-center gap-1.5">
+        <div className="flex flex-col gap-6 flex-1">
+          <div className="grid w-full  items-center gap-1.5">
             <Label htmlFor="email" className="text-lg">
               Email
             </Label>
@@ -66,7 +66,7 @@ export default function OrganisationPage({ user }: Props) {
               disabled={true}
             />
           </div>
-          <div className="grid w-full max-w-sm items-center gap-1.5">
+          <div className="grid w-full  items-center gap-1.5">
             <Label htmlFor="type" className="text-lg">
               Type
             </Label>
@@ -80,8 +80,8 @@ export default function OrganisationPage({ user }: Props) {
           </div>
         </div>
       </div>
-      <div className="flex-1">
-        <OrganisationForm organisation={userType} />
+      <div className="flex-1  no-scrollbar px-5 overflow-y-auto">
+        <OrganisationForm user={user} organisation={userType} />
       </div>
     </div>
   );

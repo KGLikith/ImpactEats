@@ -84,8 +84,8 @@ export const EditUserProfileSchema = z.object({
 export const EditorganizationProfileSchema = z.object({
   name: z.string().min(4, "Required"),
   email: z.string().email("Required"),
-  phone: z.string().optional(),
+  phone: z.string().min(10,"Required"),
   address: z.string().min(5, "Required"),
-  website: z.string().url(),
-  description: z.string().min(20, "Required"),
+  website: z.string().url().optional(),
+  description: z.string().optional(),
 });

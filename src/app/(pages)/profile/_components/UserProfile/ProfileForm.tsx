@@ -56,7 +56,6 @@ export default function ProfileForm({ user, userType }: Props) {
     values: z.infer<typeof EditUserProfileSchema>
   ) => {
     setIsLoading(true);
-    console.log(values);
     const res = await updateUser(
       values,
       user.id,
