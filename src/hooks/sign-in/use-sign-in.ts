@@ -35,9 +35,9 @@ export const useSignInForm = () => {
             title: 'Success',
             description: 'Welcome back!',
           })
-          router.push('/profile')
+          router.push('/dashboard')
         }
-      } catch (error: any) {
+      } catch (error:any) {
         setLoading(false)
         console.log(error.errors[0].code)
         if (error.errors[0].code === 'form_password_incorrect')

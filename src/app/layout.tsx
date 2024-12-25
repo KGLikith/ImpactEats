@@ -3,6 +3,9 @@ import { DM_Sans } from "next/font/google";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Toaster } from "@/components/ui/toaster";
+import { QueryClientProvider } from "@tanstack/react-query";
+import queryclient from "@/clients/queryClient";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 const font = DM_Sans({ subsets: ["latin"], display: "swap" });
 
@@ -20,8 +23,10 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en">
         <body className={`${font.className} antialiased`}>
-          {children}
-
+          <QueryClientProvider client={queryclient}>
+            {children}
+            <ReactQueryDevtools initialIsOpen={false} />
+          </QueryClientProvider>
           <Toaster />
         </body>
       </html>

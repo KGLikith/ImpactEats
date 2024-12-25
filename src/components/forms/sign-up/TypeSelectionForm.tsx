@@ -15,7 +15,7 @@ const TypeSelectionForm = ({ register, setUserType, userType }: Props) => {
     <>
       <h2 className="text-gray-400 md:text-4xl font-bold">Create an account</h2>
       <p className="text-gray-500 md:text-sm">
-      Tell us how you'd like to contribute, and we’ll create an experience tailored to your role.
+      Tell us how you&apos;d like to contribute, and we&apos;ll create an experience tailored to your role.
       </p>
       <UserTypeCard
         register={register}

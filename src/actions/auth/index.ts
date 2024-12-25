@@ -1,24 +1,28 @@
 "use server";
 
 import { client } from "@/lib/prisma";
-import { currentUser, redirectToSignIn } from "@clerk/nextjs";
+import { currentUser } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
 // import { onGetAllAccountDomains } from '../settings'
 
 export const onCompleteUserRegistration = async (
   fullname: string,
   clerkId: string,
+  email: string,
   type: string
 ) => {
   try {
     const registered = await client.user.create({
       data: {
         fullName: fullname,
+        email,
         clerkId,
         type,
       },
       select: {
         fullName: true,
         id: true,
+        email: true,
         type: true,
       },
     });
@@ -27,13 +31,14 @@ export const onCompleteUserRegistration = async (
       return { status: 200, user: registered };
     }
   } catch (error) {
+    console.log(error)
     return { status: 400 };
   }
 };
 
 export const onLoginUser = async () => {
   const user = await currentUser();
-  if (!user) redirectToSignIn();
+  if (!user) redirect("/auth/sign-in");
   else {
     try {
       const authenticated = await client.user.findUnique({
@@ -46,14 +51,11 @@ export const onLoginUser = async () => {
           type: true,
         },
       });
-      //   if (authenticated) {
-      //     const domains = await onGetAllAccountDomains()
-      //     return { status: 200, user: authenticated, domain: domains?.domains }
-      //   }
       if (authenticated) {
         return { status: 200, user: authenticated };
       }
     } catch (error) {
+      console.log(error)
       return { status: 400 };
     }
   }

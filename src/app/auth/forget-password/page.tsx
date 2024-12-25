@@ -3,38 +3,31 @@ import React, { useState } from "react";
 import { useAuth, useSignIn } from "@clerk/nextjs";
 import type { NextPage } from "next";
 import { useRouter } from "next/navigation";
-import { USER_FORGOT_PASSWORD_FORM } from "@/constants/forms";
-import FormGenerator from "@/components/forms/form-generator";
 import { useToast } from "@/hooks/use-toast";
-import { FormProvider, useForm, useFormContext } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader } from "@/components/_components/loader";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ErrorMessage } from "@hookform/error-message";
 import { Button } from "@/components/ui/button";
-import { set, z } from "zod";
-import { Loader2 } from "lucide-react";
 import Link from "next/link";
 
-const formschema = z.object({
-  email: z
-    .string()
-    .email({ message: "Invalid email" })
-    .min(1, { message: "Email is required" })
-    .max(255, { message: "Email is too long" }),
-  password: z
-    .string()
-    .min(8, { message: "Password must be at least 8 characters long" }),
-  code: z.string().length(6, { message: "Code must be 6 characters long" }),
-});
+// const formschema = z.object({
+//   email: z
+//     .string()
+//     .email({ message: "Invalid email" })
+//     .min(1, { message: "Email is required" })
+//     .max(255, { message: "Email is too long" }),
+//   password: z
+//     .string()
+//     .min(8, { message: "Password must be at least 8 characters long" }),
+//   code: z.string().length(6, { message: "Code must be 6 characters long" }),
+// });
 
 const ForgotPasswordPage: NextPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [code, setCode] = useState("");
   const [successfulCreation, setSuccessfulCreation] = useState(false);
-  const [secondFactor, setSecondFactor] = useState(false);
+  // const [secondFactor, setSecondFactor] = useState(false);
   const [error, setError] = useState("");
 
   const [loading, setLoading] = useState<boolean>(false);
@@ -43,26 +36,21 @@ const ForgotPasswordPage: NextPage = () => {
   const { isSignedIn } = useAuth();
   const { isLoaded, signIn, setActive } = useSignIn();
 
-  const form = useForm({
-    resolver: zodResolver(formschema),
-    defaultValues: {
-      email: "",
-      password: "",
-      code: "",
-    },
-  });
+  // const form = useForm({
+  //   resolver: zodResolver(formschema),
+  //   defaultValues: {
+  //     email: "",
+  //     password: "",
+  //     code: "",
+  //   },
+  // });
 
   if (!isLoaded) {
     return null;
   }
-
-  // If the user is already signed in,
-  // redirect them to the home page
   if (isSignedIn) {
-    router.push("/");
+    router.push("/dashboard");
   }
-
-  // Send the password reset code to the user's email
   async function create(e: React.FormEvent) {
     e.preventDefault();
     if (!email) {
@@ -75,7 +63,7 @@ const ForgotPasswordPage: NextPage = () => {
         strategy: "reset_password_email_code",
         identifier: email,
       })
-      .then((_) => {
+      .then(() => {
         setSuccessfulCreation(true);
         setError("");
       })
@@ -89,9 +77,6 @@ const ForgotPasswordPage: NextPage = () => {
     setLoading(false);
   }
 
-  // Reset the user's password.
-  // Upon successful reset, the user will be
-  // signed in and redirected to the home page
   async function reset(e: React.FormEvent) {
     console.log(code, password);
     if (!code) {
@@ -113,14 +98,12 @@ const ForgotPasswordPage: NextPage = () => {
       if (!result?.createdSessionId || !result) return;
       // Check if 2FA is required
       if (result.status === "needs_second_factor") {
-        setSecondFactor(true);
+        // setSecondFactor(true);
         setError("");
       } else if (result.status === "complete") {
-        // Set the active session to
-        // the newly created session (user is now signed in)
         setActive?.({ session: result.createdSessionId });
         setError("");
-        router.push("/profile");
+        router.push("/dashboard");
       } else {
         console.log(result);
       }

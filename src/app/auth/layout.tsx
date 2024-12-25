@@ -1,5 +1,5 @@
-import { currentUser } from "@clerk/nextjs";
-import Image from "next/image";
+import { currentUser } from "@clerk/nextjs/server";
+// import Image from "next/image";
 import { redirect } from "next/navigation";
 import React from "react";
 
@@ -9,9 +9,11 @@ type Props = {
 
 const Layout = async ({ children }: Props) => {
   const user = await currentUser();
-  console.log(user)
-  if (user) redirect("/profile");
+  // console.log(user)
+  if (user) {
+    redirect("/dashboard");
 
+  }
   return (
     <div className="h-screen flex w-full justify-center bg-neutral-900">
       <div className="w-[600px] ld:w-full  flex flex-col items-start p-6">
@@ -26,9 +28,7 @@ const Layout = async ({ children }: Props) => {
           width={0}
           height={0}
         /> */}
-        <h1 className="font-extrabold text-2xl text-green-600">
-            ImpactEats
-        </h1>
+        <h1 className="font-extrabold text-2xl text-green-600">ImpactEats</h1>
         {children}
       </div>
       <div className="hidden lg:flex flex-1 w-full max-h-full bg-green-50 max-w-4000px overflow-hidden relative  flex-col pt-10 pl-24 gap-3">
@@ -36,9 +36,9 @@ const Layout = async ({ children }: Props) => {
           Welcome to Impact Eats: Fighting Hunger Together
         </h2>
         <p className="text-green-700 md:text-sm mb-10">
-          Join us in our mission to connect communities through food donations. 
-          Empower those in need and help reduce food waste. 
-          Together, we can make a difference!
+          Join us in our mission to connect communities through food donations.
+          Empower those in need and help reduce food waste. Together, we can
+          make a difference!
         </p>
         {/* <Image
           src="/images/donation-ui.png"
