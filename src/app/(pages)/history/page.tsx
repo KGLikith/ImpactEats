@@ -22,7 +22,6 @@ import {
   getActionIcon,
   getCardStyle,
   getStatusColor,
-  getStatusMessage,
 } from "./constants";
 
 export type HistoryItem = {

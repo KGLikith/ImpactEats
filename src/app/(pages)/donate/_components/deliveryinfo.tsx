@@ -17,12 +17,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { useEffect } from "react";
 
 export default function DeliveryInfo() {
-  const {  setCurrentStep } = useDonationContextHook();
+  const { setCurrentStep } = useDonationContextHook();
   const form = useFormContext();
 
-  useEffect(()=>{
-    form.clearErrors()
-  },[])
+  useEffect(() => {
+    form.clearErrors();
+  }, []);
 
   const {
     formState: { errors },
@@ -44,10 +44,6 @@ export default function DeliveryInfo() {
                   className="mt-1"
                 />
               </FormControl>
-              <FormMessage>
-                {form.formState.touchedFields[field.name] &&
-                  errors.foodType?.message?.toString()}
-              </FormMessage>
             </FormItem>
           )}
         />
@@ -66,13 +62,11 @@ export default function DeliveryInfo() {
                   className="mt-1"
                 />
               </FormControl>
-              <FormMessage>
-                {errors.availableTime?.message?.toString()}
-              </FormMessage>
             </FormItem>
           )}
         />
       </div>
+      <FormMessage>{errors.availableDate?.message?.toString()}</FormMessage>
       <div className="flex gap-4 items-center">
         <FormField
           name="expiryDate"
@@ -88,9 +82,6 @@ export default function DeliveryInfo() {
                   className="mt-1"
                 />
               </FormControl>
-              <FormMessage>
-                {errors.expiryDate?.message?.toString()}
-              </FormMessage>
             </FormItem>
           )}
         />
@@ -109,13 +100,11 @@ export default function DeliveryInfo() {
                   className="mt-1"
                 />
               </FormControl>
-              <FormMessage>
-                {errors.expiryTime?.message?.toString()}
-              </FormMessage>
             </FormItem>
           )}
         />
       </div>
+      <FormMessage>{errors.expiryDate?.message?.toString()}</FormMessage>
 
       <FormField
         name="deliveryOption"
@@ -131,7 +120,7 @@ export default function DeliveryInfo() {
               >
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="pickup" id="pickup" />
-                  <Label htmlFor="pickup">Pickup</Label>
+                  <Label htmlFor="pickup">Pickup by volunteer</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="self-delivery" id="self-delivery" />
@@ -174,6 +163,7 @@ export default function DeliveryInfo() {
           </FormItem>
         )}
       />
+
       <div className="flex justify-between items-center ">
         <Button
           onClick={() => setCurrentStep(1)}

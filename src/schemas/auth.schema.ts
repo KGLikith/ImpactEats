@@ -83,6 +83,6 @@ export const EditorganizationProfileSchema = z.object({
   email: z.string().email("Required"),
   phone: z.string().min(10,"Required"),
   address: z.string().min(5, "Required"),
-  website: z.string().url().optional(),
+  website: z.string().optional(),
   description: z.string().optional(),
 });

@@ -9,9 +9,9 @@ type Props = {
 export default function Loyout({ children }: Props) {
   return (
     <div className="flex-1 w-full h-full">
-      <DonationFormProvider>
-        <DonationContextProvider>{children}</DonationContextProvider>
-      </DonationFormProvider>
+      <DonationContextProvider>
+        <DonationFormProvider>{children}</DonationFormProvider>
+      </DonationContextProvider>
     </div>
   );
 }

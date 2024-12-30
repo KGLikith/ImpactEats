@@ -4,13 +4,12 @@ import DonationForm from "./_components/donationform";
 import { useGetCurrentUserTypeInfo } from "@/hooks/user";
 import Loader from "@/components/ui/loader";
 import { UserTypeInfo } from "@/schemas/user.schema";
-import {
-  useDonationContextHook,
-} from "@/context/user-donation";
+import { useDonationContextHook } from "@/context/user-donation";
 import DeliveryInfo from "./_components/deliveryinfo";
+import ThankYouPage from "./_components/final";
 
 export default function Page() {
-  const { currentStep, } = useDonationContextHook();
+  const { currentStep } = useDonationContextHook();
   const { userType, isLoading } = useGetCurrentUserTypeInfo();
   const [donor, setDonor] = React.useState<UserTypeInfo | null>(null);
   React.useEffect(() => {
@@ -41,7 +40,11 @@ export default function Page() {
             </p>
           </div>
           <div className=" gap-2 h-full mx-auto p-6 space-y-4 bg-white rounded-lg shadow-md">
-            <DonationForm type="donation" userType={donor.type as "Donor" | "Volunteer" | "Organisation"} donor={donor} />
+            <DonationForm
+              type="donation"
+              userType={donor.type as "Donor" | "Volunteer" | "Organisation"}
+              donor={donor}
+            />
           </div>
         </div>
       );
@@ -56,6 +59,14 @@ export default function Page() {
           </div>
           <div className=" gap-2 h-full mx-auto p-6 space-y-4 bg-white rounded-lg shadow-md">
             <DeliveryInfo />
+          </div>
+        </div>
+      );
+    case 3:
+      return (
+        <div className=" py-4   ">
+          <div className=" gap-2 h-full mx-auto p-6 space-y-4 bg-white rounded-lg shadow-md">
+            <ThankYouPage />
           </div>
         </div>
       );

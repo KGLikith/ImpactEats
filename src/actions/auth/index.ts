@@ -13,7 +13,7 @@ export const onCompleteUserRegistration = async (
 ) => {
   try {
     const user = await currentUser();
-    console.log(email)
+    console.log("email",email)
     const registered = await client.user.create({
       data: {
         fullName: fullname,

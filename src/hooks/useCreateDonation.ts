@@ -9,29 +9,33 @@ import useZodForm from "./useZodForm";
 import { toast } from "./use-toast";
 import { useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
+import { useDonationContextHook } from "@/context/user-donation";
 
 export const useCreateDonationHook = (defaultData?: DefaultOptions) => {
   const router = useRouter();
   const queryClient = useQueryClient();
+  const { currentStep, setCurrentStep,setDonationId } = useDonationContextHook();
   const { mutate, isPending } = useMutationData(
     ["create-donation"],
     (data: DonationFormData) => createDonation(data),
     "allDonations",
-    async(data) => {
+    async (data) => {
+      // console.log("data",data)
       if (data.status === 200) {
         toast({
           title: "Donation Created",
           description: "Your donation has been created successfully",
           duration: 2000,
         });
-        router.push(`/donation/${data.data.id}`);
+        setDonationId(data.data.id);
+        setCurrentStep(currentStep + 1);
         await queryClient.invalidateQueries({
           queryKey: ["user-history"],
         });
         await queryClient.invalidateQueries({
           queryKey: ["user-notifications"],
         });
-        console.log("helloh")
+        console.log("helloh");
       }
     },
     (error) => {

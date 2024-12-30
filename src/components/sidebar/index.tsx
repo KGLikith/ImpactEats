@@ -5,15 +5,15 @@ import MaxMenu from "./maximized-menu";
 import { MinMenu } from "./minimized-menu";
 import useSideBar from "@/context/use-sidebar";
 import { TooltipProvider } from "../ui/tooltip";
-import { useGetCurrentUserTypeInfo } from "@/hooks/user";
+import {  useGetUser } from "@/hooks/user";
 import { UserTypeInfo } from "@/schemas/user.schema";
 
 const SideBar = () => {
   const [currentuserType, setCurrentUserType] = useState<UserTypeInfo>();
-  const { userType } = useGetCurrentUserTypeInfo();
+  const { user } = useGetUser();
   const { expand, onExpand, page, onSignOut } = useSideBar();
   useEffect(() => {
-    setCurrentUserType(userType);
+    setCurrentUserType(user);
   });
   if (!currentuserType) return null;
   return (

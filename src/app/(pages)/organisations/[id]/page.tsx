@@ -5,17 +5,17 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import Loader from "@/components/ui/loader";
 import { useQueryData } from "@/hooks/useQueryData";
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 export default function OrganisationProfile() {
   const { id } = useParams();
-  const {
-    data: organisation,
-    isLoading,
-  } = useQueryData(["organisation", id], () => getOrganisationById(id as string));
+  const { data: organisation, isLoading } = useQueryData(
+    ["organisation", id],
+    () => getOrganisationById(id as string)
+  );
 
   if (isLoading) {
     return (
@@ -37,7 +37,6 @@ export default function OrganisationProfile() {
       imageUrl: string;
       description: string;
       _count: {
-        donation: number;
         volunteers: number;
         claim: number;
       };
@@ -78,10 +77,6 @@ export default function OrganisationProfile() {
           {/* Stats */}
           <div className="grid grid-cols-3 gap-8 mb-8">
             <div className="text-center">
-              <p className="text-xl font-bold">{orgData._count.donation}+</p>
-              <p className="text-sm text-gray-500">Total Foods</p>
-            </div>
-            <div className="text-center">
               <p className="text-xl font-bold">{orgData._count.claim}+</p>
               <p className="text-sm text-gray-500">Total Campaigns</p>
             </div>
@@ -92,13 +87,11 @@ export default function OrganisationProfile() {
           </div>
 
           {/* Donate Button */}
-          <Button 
+          <Button
             className="w-full py-6 text-lg bg-orange-500 text-black hover:bg-orange-600 mb-8"
             asChild
           >
-            <Link href={`/donate?org=${orgData.id}`}>
-              Donate Now
-            </Link>
+            <Link href={`/donate?org=${orgData.id}`}>Donate Now</Link>
           </Button>
 
           {/* Tabs */}
@@ -138,9 +131,6 @@ export default function OrganisationProfile() {
           </Tabs>
         </div>
       </div>
-
-      
     </div>
   );
 }
-

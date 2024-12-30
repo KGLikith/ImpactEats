@@ -46,7 +46,8 @@ export const createDonation = async (data: DonationFormData) => {
         userId: user.userId,
         header: "New Donation",
         action: "Created",
-        message:"You created a donation and is waiting to be claimed by an organisation",
+        message:
+          "You created a donation and is waiting to be claimed by an organisation",
         link: `/donation/${res.id}`,
         isRead: false,
       },
@@ -62,7 +63,8 @@ export const createDonation = async (data: DonationFormData) => {
           data.quantityUnit === "kg"
             ? `You donated a ${data.name} of ${data.quantity} kg`
             : `You donated a ${data.name} for ${data.quantity} people`,
-        message:"You created a donation and is waiting to be claimed by an organisation",
+        message:
+          "You created a donation and is waiting to be claimed by an organisation",
         timing: `Donation form submitted on ${new Date().toLocaleString()} \n `,
         link: `/donation/${res.id}`,
       },
@@ -70,6 +72,63 @@ export const createDonation = async (data: DonationFormData) => {
     return { status: 200, data: res };
   } catch (err) {
     console.log("error in creating donation", (err as Error).message);
+    return { status: 500, data: null };
+  }
+};
+
+export const getDonationDetails = async (id: string) => {
+  try {
+    const data = await client.donation.findUnique({
+      where: {
+        id: id,
+        donor: {
+          isNot: null,
+        },
+      },
+      include: {
+        donor: true,
+        claim: {
+          select: {
+            id: true,
+            status: true,
+            organisationId: true,
+            createdAt: true,
+            organisation: {
+              select: {
+                id: true,
+                name: true,
+                imageUrl: true,
+                email: true,
+                phone: true,
+                address: true,
+              },
+            },
+            task: {
+              select: {
+                id: true,
+                status: true,
+                volunteerId: true,
+                volunteer: {
+                  select: {
+                    id: true,
+                    name: true,
+                    imageUrl: true,
+                    email: true,
+                    phone: true,
+                  },
+                },
+                createdAt: true,
+                updatedAt: true,
+              },
+            },
+          },
+        },
+      },
+    });
+    if (!data) return { status: 404, data: null };
+    return { status: 200, data: data };
+  } catch (err) {
+    console.log("error in getting donation details", (err as Error).message);
     return { status: 500, data: null };
   }
 };
