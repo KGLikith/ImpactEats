@@ -9,6 +9,9 @@ export async function GET(req: NextRequest) {
   if (!id || !type) {
     return NextResponse.json({ status: 400 });
   }
+  // console.log(id, type);
+
+  // WIP: Dynamically rendering these
   try {
     if (type === "Organisation") {
       const userType = await client.organisation.findUnique({
@@ -30,7 +33,7 @@ export async function GET(req: NextRequest) {
           userId: id,
         },
       });
-      if (userType) return NextResponse.json({ userType });
+      if (userType) return NextResponse.json({ userType, type });
     }
     return NextResponse.json({ userType: {} });
   } catch (err) {

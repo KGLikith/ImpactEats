@@ -19,6 +19,7 @@ export interface UserType {
 }
 
 export default function Page() {
+
   const [user, setUser] = React.useState<UserType | null>(null);
   const { user: currentUser, isLoading } = useGetUser();
 

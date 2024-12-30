@@ -1,5 +1,13 @@
+"use client";
+import Contribution from "@/components/icons/contribution";
 import Donate from "@/components/icons/donate";
-import { Building2, History, LayoutDashboardIcon, User } from "lucide-react";
+import {
+  Bell,
+  Building2,
+  History,
+  LayoutDashboardIcon,
+  User,
+} from "lucide-react";
 import { JSX } from "react";
 
 type SIDE_BAR_MENU_PROPS = {
@@ -8,7 +16,37 @@ type SIDE_BAR_MENU_PROPS = {
   path: string;
 };
 
-export const SIDE_BAR_MENU: SIDE_BAR_MENU_PROPS[] = [
+
+
+export const BOTTOM_SIDE_BAR_MENU: SIDE_BAR_MENU_PROPS[] = [
+  {
+    label: "Organisations",
+    icon: <Building2 />,
+    path: "organisations",
+  },
+  {
+    label: "History",
+    icon: <History />,
+    path: "history",
+  },
+  {
+    label: "Notifications",
+    icon: <Bell />,
+    path: "notifications",
+  },
+  {
+    label: "Contributions",
+    icon: <Contribution />,
+    path: "contributions",
+  },
+  {
+    label: "Profile",
+    icon: <User />,
+    path: "profile",
+  },
+]
+
+export const DONOR_SIDE_BAR_MENU: SIDE_BAR_MENU_PROPS[] = [
   {
     label: "Dashboard",
     icon: <LayoutDashboardIcon />,
@@ -19,20 +57,34 @@ export const SIDE_BAR_MENU: SIDE_BAR_MENU_PROPS[] = [
     icon: <Donate />,
     path: "donate",
   },
-  {
-    label: "History",
-    icon: <History />,
-    path: "history",
-  },
-  {
-    label: "Organisations",
-    icon: <Building2 />,
-    path: "organisations",
-  },
-  {
-    label: "Profile",
-    icon: <User />,
-    path: "profile",
-  },
+  ...BOTTOM_SIDE_BAR_MENU, 
+  
 ];
 
+export const VOLUNTEER_SIDE_BAR_MENU: SIDE_BAR_MENU_PROPS[] = [
+  {
+    label: "Dashboard",
+    icon: <LayoutDashboardIcon />,
+    path: "dashboard",
+  },
+  {
+    label: "Volunteer",
+    icon: <Contribution />,
+    path: "volunteer",
+  },
+  ...BOTTOM_SIDE_BAR_MENU, 
+];
+
+export const ORGANISATION_SIDE_BAR_MENU: SIDE_BAR_MENU_PROPS[] = [
+  {
+    label: "Dashboard",
+    icon: <LayoutDashboardIcon />,
+    path: "dashboard",
+  },
+  {
+    label: "Your Volunteers",
+    icon: <Building2 />,
+    path: "volunteers",
+  },
+  ...BOTTOM_SIDE_BAR_MENU, 
+];

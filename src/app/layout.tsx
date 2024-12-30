@@ -22,7 +22,7 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en">
-        <body className={`${font.className} antialiased`}>
+        <body className={`${font.className} antialiased overflow-hidden  `}>
           <QueryClientProvider client={queryclient}>
             {children}
             <ReactQueryDevtools initialIsOpen={false} />

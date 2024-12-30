@@ -1,10 +1,7 @@
 "use client";
-import {
-  EditorganizationProfileSchema,
-  EditUserProfileSchema,
-} from "@/schemas/auth.schema";
+import { EditorganizationProfileSchema } from "@/schemas/auth.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import {
@@ -19,12 +16,12 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
-import { updateOrganisation, updateUser } from "@/actions/user";
+import { updateOrganisation } from "@/actions/user";
 import { toast } from "@/hooks/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
 import { cn } from "@/lib/utils";
 import { UserType } from "../../page";
-import { UserTypeInfo } from "../UserProfile/ProfileForm";
+import { UserTypeInfo } from "@/schemas/user.schema";
 
 type Props = {
   organisation: UserTypeInfo;
@@ -67,7 +64,10 @@ export default function OrganisationForm({ organisation, user }: Props) {
     });
     setIsLoading(false);
     await queryClient.invalidateQueries({
-      queryKey: ["currentUserType", user.id],
+      queryKey: ["UserTypeInfo", user.id],
+    });
+    await queryClient.invalidateQueries({
+      queryKey: ["currentUserTypeInfo"],
     });
   };
 

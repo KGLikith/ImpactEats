@@ -9,15 +9,18 @@ export const onCompleteUserRegistration = async (
   fullname: string,
   clerkId: string,
   email: string,
-  type: string
+  type: 'Donor' | 'Organisation' | 'Volunteer'
 ) => {
   try {
+    const user = await currentUser();
+    console.log(email)
     const registered = await client.user.create({
       data: {
         fullName: fullname,
         email,
         clerkId,
         type,
+        imageUrl: user?.imageUrl
       },
       select: {
         fullName: true,

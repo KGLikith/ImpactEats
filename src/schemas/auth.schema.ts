@@ -1,7 +1,7 @@
 import { ZodType, z } from "zod";
 
 export type UserRegistrationProps = {
-  type: string;
+  type: 'Donor' | 'Organisation' | 'Volunteer';
   fullname: string;
   email: string;
   password: string;
@@ -11,7 +11,7 @@ export type UserRegistrationProps = {
 
 export const UserRegistrationSchema: ZodType<UserRegistrationProps> = z
   .object({
-    type: z.string().min(1),
+    type: z.enum(['Donor','Volunteer','Organisation']),
     fullname: z
       .string()
       .min(4, { message: "your full name must be atleast 4 characters long" }),
@@ -22,10 +22,7 @@ export const UserRegistrationSchema: ZodType<UserRegistrationProps> = z
       .max(64, {
         message: "Your password can not be longer then 64 characters long",
       })
-      .refine(
-        (value) => /^[a-zA-Z0-9_.-]*$/.test(value ?? ""),
-        "password should contain only alphabets and numbers"
-      ),
+      ,
     confirmPassword: z.string(),
     otp: z.string().min(6, { message: "You must enter a 6 digit code" }),
   })

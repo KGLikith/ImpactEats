@@ -21,16 +21,7 @@ import { toast } from "@/hooks/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
 import { cn } from "@/lib/utils";
 import { UserType } from "../../page";
-
-export type UserTypeInfo = {
-  id: string;
-  name: string;
-  email?: string;
-  phone: string;
-  address: string;
-  website: string;
-  description: string;
-};
+import { UserTypeInfo } from "@/schemas/user.schema";
 
 type Props = {
   user: UserType;
@@ -56,12 +47,15 @@ export default function ProfileForm({ user, userType }: Props) {
     values: z.infer<typeof EditUserProfileSchema>
   ) => {
     setIsLoading(true);
+    console.log(user.email)
     const res = await updateUser(
       values,
       user.id,
       user.type,
-      user.imageUrl || ""
+      user.imageUrl || "",
+      user.email
     );
+    console.log(res);
     if (!res) {
       setIsLoading(false);
       toast({
@@ -80,25 +74,28 @@ export default function ProfileForm({ user, userType }: Props) {
       queryKey: ["currentUser"],
     });
     await queryClient.invalidateQueries({
-      queryKey: ["currentUserType", user.id],
+      queryKey: ["UserTypeInfo", user.id],
+    });
+    await queryClient.invalidateQueries({
+      queryKey: ["currentUserTypeInfo"],
     });
   };
 
-  // useEffect(() => {
-  //   if (user)
-  //     form.reset({
-  //       name: user.fullName,
-  //       email: user.email,
-  //       type: user.type,
-  //     });
-  //   if (userType) {
-  //     form.reset({
-  //       name: userType.name,
-  //       phone: userType.phone || "",
-  //       address: userType.address || "",
-  //     });
-  //   }
-  // }, [user, userType]);
+  useEffect(() => {
+    if (user)
+      form.reset({
+        name: user.fullName,
+        email: user.email,
+        type: user.type,
+      });
+    if (userType) {
+      form.reset({
+        name: userType.name,
+        phone: userType.phone || "",
+        address: userType.address || "",
+      });
+    }
+  }, [user, userType]);
   return (
     <Form {...form}>
       <form

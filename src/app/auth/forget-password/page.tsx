@@ -70,6 +70,8 @@ const ForgotPasswordPage: NextPage = () => {
       .catch((err) => {
         console.log("error", err.errors[0].longMessage);
         toast({
+          variant: "destructive",
+          duration: 2000,
           description: err.errors[0].longMessage,
         });
         // setError(err.errors[0].longMessage);
@@ -78,6 +80,7 @@ const ForgotPasswordPage: NextPage = () => {
   }
 
   async function reset(e: React.FormEvent) {
+    e.preventDefault();
     console.log(code, password);
     if (!code) {
       setError("Code is required");
@@ -87,7 +90,6 @@ const ForgotPasswordPage: NextPage = () => {
       setError("Password is required");
       return;
     }
-    e.preventDefault();
     setLoading(true);
     try {
       const result = await signIn?.attemptFirstFactor({

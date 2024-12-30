@@ -4,16 +4,9 @@ import { useGetUserTypeInfo } from "@/hooks/user";
 import React, { useEffect } from "react";
 import ProfileForm from "./ProfileForm";
 import { UserType } from "../../page";
+import { UserTypeInfo } from "@/schemas/user.schema";
 
-export type UserTypeInfo={
-  id: string;
-  name: string;
-  email?: string;
-  phone: string;
-  address: string;
-  website: string;
-  description: string;
-}
+
 type Props = {
   user: UserType;
 };

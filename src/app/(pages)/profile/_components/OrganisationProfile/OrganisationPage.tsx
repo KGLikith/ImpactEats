@@ -4,10 +4,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { UserType } from "../../page";
 import OrganisationForm from "./OrganisationForm";
-import { UserTypeInfo } from "../UserProfile/ProfileForm";
 import { useGetUserTypeInfo } from "@/hooks/user";
 import { Button } from "@/components/ui/button";
 import Loader from "@/components/ui/loader";
+import { UserTypeInfo } from "@/schemas/user.schema";
 
 type Props = {
   user: UserType;
@@ -40,7 +40,7 @@ export default function OrganisationPage({ user }: Props) {
 
   if (!userType) {
     return (
-      <div className="flex flex-1 w-full h-screen justify-center items-center">
+      <div className="flex   h-screen w-full justify-center items-center">
         <Loader state color="black" />
       </div>
     );

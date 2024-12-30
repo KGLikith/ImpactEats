@@ -6,7 +6,7 @@ import { FieldErrors, FieldValues, UseFormRegister } from "react-hook-form";
 import { Textarea } from "@/components/ui/textarea";
 
 type Props = {
-  type: "text" | "email" | "password";
+  type: "text" | "email" | "password" | "number";
   inputType: "select" | "input" | "textarea";
   options?: { value: string; label: string; id: string }[];
   label?: string;

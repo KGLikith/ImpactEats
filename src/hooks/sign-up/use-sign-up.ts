@@ -10,13 +10,14 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { onCompleteUserRegistration } from "@/actions/auth";
 import { useToast } from "../use-toast";
+import { z } from "zod";
 
 export const useSignUpForm = () => {
   const { toast } = useToast();
   const [loading, setLoading] = useState<boolean>(false);
   const { signUp, isLoaded, setActive } = useSignUp();
   const router = useRouter();
-  const methods = useForm<UserRegistrationProps>({
+  const methods = useForm<z.infer<typeof UserRegistrationSchema>>({
     resolver: zodResolver(UserRegistrationSchema),
     defaultValues: {
       type: "Donor",
@@ -65,7 +66,6 @@ export const useSignUpForm = () => {
 
         if (completeSignUp.status == "complete") {
           if (!signUp.createdUserId) return;
-
           const registered = await onCompleteUserRegistration(
             values.fullname,
             signUp.createdUserId,

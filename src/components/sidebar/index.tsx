@@ -1,13 +1,21 @@
 "use client";
 import { cn } from "@/lib/utils";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import MaxMenu from "./maximized-menu";
 import { MinMenu } from "./minimized-menu";
 import useSideBar from "@/context/use-sidebar";
 import { TooltipProvider } from "../ui/tooltip";
+import { useGetCurrentUserTypeInfo } from "@/hooks/user";
+import { UserTypeInfo } from "@/schemas/user.schema";
 
 const SideBar = () => {
+  const [currentuserType, setCurrentUserType] = useState<UserTypeInfo>();
+  const { userType } = useGetCurrentUserTypeInfo();
   const { expand, onExpand, page, onSignOut } = useSideBar();
+  useEffect(() => {
+    setCurrentUserType(userType);
+  });
+  if (!currentuserType) return null;
   return (
     <div
       className={cn(
@@ -20,9 +28,19 @@ const SideBar = () => {
     >
       <TooltipProvider>
         {!expand ? (
-          <MinMenu onShrink={onExpand} current={page!} onSignOut={onSignOut} />
+          <MinMenu
+            onShrink={onExpand}
+            type={currentuserType.type}
+            current={page!}
+            onSignOut={onSignOut}
+          />
         ) : (
-          <MaxMenu current={page!} onExpand={onExpand} onSignOut={onSignOut} />
+          <MaxMenu
+            current={page!}
+            type={currentuserType.type}
+            onExpand={onExpand}
+            onSignOut={onSignOut}
+          />
         )}
       </TooltipProvider>
     </div>
