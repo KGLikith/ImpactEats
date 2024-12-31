@@ -82,6 +82,7 @@ type completedClaims = {
 };
 
 export default function OrganisationProfile() {
+  const { id } = useParams();
   const queryClient = useQueryClient();
   const { mutate } = useMutationData(
     ["add-volunteer"],
@@ -89,7 +90,6 @@ export default function OrganisationProfile() {
       addVolunteer(orgId, volId),
     "all-organisations",
     async (data) => {
-      console.log("Volunteered", data);
       await queryClient.invalidateQueries({
         queryKey: ["organisation", data.id],
       });
@@ -100,13 +100,11 @@ export default function OrganisationProfile() {
       });
     }
   );
-  const { id } = useParams();
   const { userType, isLoading: userLoading } = useGetCurrentUserTypeInfo();
   const { data: organisation, isLoading } = useQueryData(
     ["organisation", id],
     () => getOrganisationById(id as string)
   );
-  console.log(organisation,userType);
   if (isLoading || userLoading || !userType) {
     return (
       <div className="flex justify-center items-center h-full w-full">
@@ -334,10 +332,37 @@ export default function OrganisationProfile() {
               ) : (
                 <>
                   {orgData.volunteers.map((vol) => (
-                    <div key={vol.id} className="border-b py-4">
-                      <p className="text-gray-900">{vol.name}</p>
-                      <p className="text-sm text-gray-500">{vol.email}</p>
-                      <p></p>
+                    <div
+                      key={vol.id}
+                      className="border-b py-4 flex items-center gap-4 bg-white shadow-sm p-4 rounded-lg"
+                    >
+                      {/* Avatar */}
+                      <Avatar className="h-12 w-12 bg-green-100">
+                        <AvatarImage src={vol.imageUrl} alt={vol.name} />
+                        <AvatarFallback className="bg-green-600 text-white">
+                          {vol.name.charAt(0)}
+                        </AvatarFallback>
+                      </Avatar>
+
+                      {/* Volunteer Details */}
+                      <div className="flex-1">
+                        <p className="text-lg font-medium text-gray-900">
+                          {vol.name}
+                        </p>
+                        <p className="text-sm text-gray-500">{vol.email}</p>
+                        <p className="text-sm text-gray-500">{vol.phone}</p>
+                      </div>
+
+                      {/* Additional Action (Optional) */}
+                      <div>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="text-blue-600 border-blue-600"
+                        >
+                          View Profile
+                        </Button>
+                      </div>
                     </div>
                   ))}
                 </>
@@ -349,127 +374,3 @@ export default function OrganisationProfile() {
     </div>
   );
 }
-
-//       {/* Main Content */}
-//       <div className="max-w-lg mx-auto pt-20 px-4 pb-20">
-//         <div className="text-center mb-8">
-//           <Avatar className="h-20 w-20 mx-auto mb-4 bg-green-100">
-//             <AvatarImage src={orgData.imageUrl} alt={orgData.name} />
-//             <AvatarFallback className="bg-green-600 text-white text-2xl">
-//               {orgData.name.charAt(0)}
-//             </AvatarFallback>
-//           </Avatar>
-//           <h2 className="text-xl font-bold mb-8">{orgData.name}</h2>
-
-//           {/* Stats */}
-//           <div className="grid grid-cols-2 gap-8 mb-8">
-//             <div className="text-center">
-//               <p className="text-xl font-bold">{orgData._count.claims}</p>
-//               <p className="text-sm text-gray-500">Total Claims</p>
-//             </div>
-//             <div className="text-center">
-//               <p className="text-xl font-bold">{orgData._count.volunteers}</p>
-//               <p className="text-sm text-gray-500">Total Volunteers</p>
-//             </div>
-//           </div>
-
-//           {/* Donate Button */}
-//           <div className="flex gap-4 mb-8">
-//             {isDonor && (
-//               <Button className="bg-orange hover:text-black hover:bg-orange w-full" asChild>
-//                 <Link href={`/donate?org=${orgData.id}`}>Donate Now</Link>
-//               </Button>
-//             )}
-//             {isVolunteer && (
-//               <Button
-//                 className="bg-green-500 w-full"
-//                 onClick={() => console.log("Volunteer")}
-//               >
-//                 Volunteer
-//               </Button>
-//             )}
-//           </div>
-
-//           {/* Tabs */}
-//           <Tabs defaultValue="about" className="w-full">
-//             <TabsList className="grid w-full grid-cols-4">
-//               <TabsTrigger value="about">About</TabsTrigger>
-//               <TabsTrigger value="requests">Requests</TabsTrigger>
-//               <TabsTrigger value="claims">Claims</TabsTrigger>
-//               <TabsTrigger value="volunteers">Volunteers</TabsTrigger>
-//             </TabsList>
-//             <TabsContent value="about" className="text-left mt-4">
-//               <p className="text-gray-600">{orgData.description}</p>
-//               <div className="grid grid-cols-2 gap-4 mt-8">
-//                 <div>
-//                   <p className="text-sm text-gray-500">Email</p>
-//                   <p className="text-gray-600">{orgData.email}</p>
-//                 </div>
-//                 <div>
-//                   <p className="text-sm text-gray-500">Phone</p>
-//                   <p className="text-gray-600">{orgData.phone}</p>
-//                 </div>
-//                 <div>
-//                   <p className="text-sm text-gray-500">Address</p>
-//                   <p className="text-gray-600">{orgData.address}</p>
-//                 </div>
-//                 <div>
-//                   <p className="text-sm text-gray-500">Website</p>
-//                   <p className="text-gray-600">{orgData.website}</p>
-//                 </div>
-//               </div>
-//             </TabsContent>
-//             <TabsContent value="requests" className="mt-4">
-//               {orgData.request.map((req) => (
-//                 <div key={req.id} className="border-b py-4">
-//                   <p className="text-gray-600 font-semibold">{req.name}</p>
-//                   <p className="text-sm text-gray-500">{req.description}</p>
-//                 </div>
-//               ))}
-//             </TabsContent>
-//             <TabsContent value="claims" className="mt-4">
-//               <Tabs defaultValue="pending">
-//                 <TabsList className="grid w-full grid-cols-2">
-//                   <TabsTrigger className=" font-bold " value="pending">
-//                     Pending
-//                   </TabsTrigger>
-//                   <TabsTrigger className=" font-bold" value="completed">
-//                     Completed
-//                   </TabsTrigger>
-//                 </TabsList>
-//                 <TabsContent value="pending">
-//                   {pendingClaims.map((claim) => (
-//                     <div key={claim.id} className="border-b py-4">
-//                       <p className="text-gray-600">{claim.donation.name}</p>
-//                       <p className="text-sm text-gray-500">
-//                         {claim.donation.description}
-//                       </p>
-//                     </div>
-//                   ))}
-//                 </TabsContent>
-//                 <TabsContent value="completed">
-//                   {completedClaims.map((claim) => (
-//                     <div key={claim.id} className="border-b py-4">
-//                       <p className="text-gray-600">{claim.donation.name}</p>
-//                       <p className="text-sm text-gray-500">
-//                         {claim.donation.description}
-//                       </p>
-//                     </div>
-//                   ))}
-//                 </TabsContent>
-//               </Tabs>
-//             </TabsContent>
-//             <TabsContent value="volunteers" className="mt-4">
-//               {orgData.volunteers.map((vol) => (
-//                 <div key={vol.id} className="border-b py-4">
-//                   <p className="text-gray-600">{vol.name}</p>
-//                   <p className="text-sm text-gray-500">{vol.email}</p>
-//                 </div>
-//               ))}
-//             </TabsContent>
-//           </Tabs>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }

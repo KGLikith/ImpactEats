@@ -1,5 +1,9 @@
 "use client";
-import { getAllOrganisationsWithVolunteers } from "@/actions/global";
+import {
+  getAllOrganisations,
+  getAllOrganisationsWithVolunteers,
+  getUserTypeWithVolunteers,
+} from "@/actions/global";
 import { addVolunteer } from "@/actions/organisations";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -8,13 +12,12 @@ import Loader from "@/components/ui/loader";
 import { toast } from "@/hooks/use-toast";
 import { useMutationData } from "@/hooks/useMutationData";
 import { useQueryData } from "@/hooks/useQueryData";
-import { useGetCurrentUserTypeInfo } from "@/hooks/user";
-import { volunteerType } from "@/schemas/user.schema";
+import { UserTypeInfo, volunteerType } from "@/schemas/user.schema";
 import { useQueryClient } from "@tanstack/react-query";
 import { MapPin, Phone, User, Globe, Mail } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 type OrganisationType = {
   id: string;
@@ -30,18 +33,36 @@ type OrganisationType = {
     volunteers: number;
     claims: number;
   };
-  volunteers: volunteerType[];
+};
+
+type userType = UserTypeInfo & {
+  organisations?: {
+    id: string;
+    name: true;
+    email: true;
+    phone: true;
+    address: true;
+    website: true;
+    imageUrl: true;
+    description: true;
+    createdAt: true;
+  }[];
 };
 
 export default function Organisations() {
-  const { userType, isLoading: userLoading } = useGetCurrentUserTypeInfo();
+  const { data, isLoading: userLoading } = useQueryData(
+    ["user-type"],
+    getUserTypeWithVolunteers
+  );
+  const [userType, setUserType] = useState<userType>();
   const router = useRouter();
   const { data: organisations, isLoading } = useQueryData(
     ["all-organisations"],
-    getAllOrganisationsWithVolunteers
+    getAllOrganisations
   );
   const queryClient = useQueryClient();
   const [searchTerm, setSearchTerm] = useState("");
+  const [showVolunteerOnly, setShowVolunteerOnly] = useState(false);
 
   const { mutate } = useMutationData(
     ["add-volunteer"],
@@ -49,7 +70,9 @@ export default function Organisations() {
       addVolunteer(orgId, volId),
     "all-organisations",
     async (data) => {
-      console.log("Volunteered", data);
+      await queryClient.invalidateQueries({
+        queryKey: ["user-type"],
+      });
       await queryClient.invalidateQueries({
         queryKey: ["organisation", data.id],
       });
@@ -61,6 +84,12 @@ export default function Organisations() {
     }
   );
 
+  useEffect(() => {
+    if (data) {
+      const { data: userType } = data as { data: userType };
+      setUserType(userType);
+    }
+  });
   if (isLoading || userLoading) {
     return (
       <div className="fixed inset-0 flex justify-center items-center bg-gray-100/50 z-50">
@@ -91,31 +120,49 @@ export default function Organisations() {
     );
   }
 
-  // Filter organizations based on search term
-  const filteredOrganisations = organisationsData.filter(
-    (org) =>
+  // Filter organizations based on search term and volunteer filter
+  const filteredOrganisations = organisationsData.filter((org) => {
+    const matchesSearch =
       org.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       org.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      org.address.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+      org.address.toLowerCase().includes(searchTerm.toLowerCase());
+
+    const matchesVolunteerFilter =
+      !showVolunteerOnly || org._count.volunteers > 0;
+
+    return matchesSearch && matchesVolunteerFilter;
+  });
 
   return (
     <div className="px-4 py-8 min-h-screen">
       <h1 className="text-4xl font-bold text-gray-800 mb-6">Organizations</h1>
-      <Input
-        type="text"
-        placeholder="Search by name, email, or address"
-        className="mb-6"
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-      />
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6  w-full">
+      <div className="flex flex-col  gap-4 mb-6">
+        <Input
+          type="text"
+          placeholder="Search by name, email, or address"
+          className="flex-1"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+        {userType?.type==="Volunteer" && <div className="flex items-center">
+          <input
+            type="checkbox"
+            id="volunteerFilter"
+            checked={showVolunteerOnly}
+            onChange={(e) => setShowVolunteerOnly(e.target.checked)}
+            className="mr-2"
+          />
+          <label htmlFor="volunteerFilter" className="text-gray-700">
+            Show the organizations you volunteer only
+          </label>
+        </div>}
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
         {filteredOrganisations.map((org) => (
           <div
             key={org.id}
             className="border rounded-lg p-6 hover:shadow-lg transition-shadow duration-300 flex flex-col h-full gap-4"
           >
-            {/* Wrap only the parts linking to details page */}
             <Link href={`/organisations/${org.id}`}>
               <div className="flex items-center mb-4">
                 <Avatar className="h-16 w-16 mr-4">
@@ -132,8 +179,6 @@ export default function Organisations() {
                 {org.description}
               </p>
             </Link>
-
-            {/* Separate interactive elements */}
             <div className="text-sm text-gray-500 space-y-2">
               <div className="flex items-center">
                 <MapPin className="h-4 w-4 mr-2 text-gray-400" />
@@ -142,8 +187,6 @@ export default function Organisations() {
               <div
                 className="flex items-center cursor-pointer"
                 onClick={() => {
-                  console.log("hello");
-                  console.log(org.phone);
                   navigator.clipboard.writeText(org.phone);
                   toast({
                     title: "Phone Copied",
@@ -179,14 +222,13 @@ export default function Organisations() {
                 </div>
               )}
             </div>
-
             <div className="mt-4 flex justify-between text-sm text-gray-500">
               <span>Volunteers: {org._count.volunteers}</span>
               <span>Claims: {org._count.claims}</span>
             </div>
-            {userType.type === "Volunteer" && (
+            {userType?.type === "Volunteer" && (
               <>
-                {org.volunteers.find((vol) => vol.id === userType.id) ? (
+                {userType?.organisations?.find((orgd) => orgd.id === org.id) ? (
                   <Button
                     className="mt-4 bg-green-500 text-white rounded-lg hover:bg-orange-600 transition-colors"
                     onClick={(e) => {
@@ -214,7 +256,7 @@ export default function Organisations() {
                 )}
               </>
             )}
-            {userType.type === "Donor" && (
+            {userType?.type === "Donor" && (
               <Button
                 className="mt-4 bg-green-500 text-white rounded-lg hover:bg-orange-600 transition-colors"
                 onClick={(e) => {
@@ -228,7 +270,7 @@ export default function Organisations() {
           </div>
         ))}
         {filteredOrganisations.length === 0 && (
-          <p className="text-center text-gray-500 w-screen  flex justify-center items-center">
+          <p className="text-center text-gray-500 w-full">
             No organizations match your search criteria.
           </p>
         )}

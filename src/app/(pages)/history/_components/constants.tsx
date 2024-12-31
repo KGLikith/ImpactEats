@@ -1,5 +1,6 @@
-import { HistoryItem } from "./page";
+// import { HistoryItem } from "./page";
 import {  Gift, HandHeart, ShoppingBag, User } from "lucide-react";
+import { HistoryItem } from "./DonorPage";
 
 export const getActionIcon = (type: HistoryItem["type"]) => {
   switch (type) {

@@ -22,11 +22,9 @@ export const getOrganisationById = async (id: string) => {
     });
     if (!organisation) return { status: 404, data: null };
     const pendingClaims = await client.claim.findMany({
-      where: { organisationId: id,
-        OR:[
-          {status: "CLAIMED"},
-          {status: "ASSIGNED"}
-        ]
+      where: {
+        organisationId: id,
+        OR: [{ status: "CLAIMED" }, { status: "ASSIGNED" }],
       },
       select: {
         id: true,
@@ -133,7 +131,7 @@ export const getVolunteers = async (organisationId: string) => {
         volunteers: true,
       },
     });
-    if(!volunteers) return { status: 404, volunteers: [] };
+    if (!volunteers) return { status: 404, volunteers: [] };
     return { status: 200, volunteers: volunteers.volunteers };
   } catch (err) {
     console.log("error in fetching volunteers", err);
@@ -141,10 +139,8 @@ export const getVolunteers = async (organisationId: string) => {
   }
 };
 
-
 export const addVolunteer = async (orgId: string, volId: string) => {
   try {
-    console.log("elasd")
     const organisation = await client.organisation.update({
       where: { id: orgId },
       data: {
@@ -155,9 +151,56 @@ export const addVolunteer = async (orgId: string, volId: string) => {
         },
       },
     });
+    const volunteer = await client.volunteer.findUnique({
+      where: { id: volId },
+    });
+    if (!volunteer || !organisation) return { status: 404, data: null };
+    await client.notification.create({
+      data: {
+        userId: volunteer.userId,
+        type: "VOLUNTEER",
+        header: "Volunteering",
+        action: "COMPLETED",
+        message: `Thank you for volunteering for ${organisation.name}.\n
+        All the updates from this organisation are notified to you.`,
+        link: `/organisations/${orgId}`,
+      },
+    });
+    await client.notification.create({
+      data: {
+        userId: organisation.userId,
+        type: "VOLUNTEER",
+        header: "Volunteering",
+        action: "COMPLETED",
+        message: `${volunteer.name} started volunteering for your organisation.\n
+        All the updates are notified to the volunteer.`,
+        link: `/volunteers`,
+      },
+    });
+
+    await client.history.create({
+      data: {
+        userId: volunteer?.userId,
+        type: "VOLUNTEER",
+        action: "VOLUNTEERED",
+        header: "Volunteering",
+        message: `You started volunteering for ${organisation.name}`,
+        link: `/organisations/${orgId}`,
+      },
+    });
+    await client.history.create({
+      data: {
+        userId: organisation?.userId,
+        type: "VOLUNTEER",
+        action: "VOLUNTEERED",
+        header: "Volunteering",
+        message: `${volunteer.name} started volunteering for your organisation`,
+        // link: `/volunteers`,
+      },
+    });
     return { status: 200, data: organisation };
   } catch (err) {
     console.log("error in adding volunteer", err);
     return { status: 500, data: null };
   }
-}
+};

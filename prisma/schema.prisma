@@ -148,7 +148,7 @@ model History {
   user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   action      String //completed, claimed , cancelled, etc
   header      String
-  description String
+  description String?
   message     String
   donationId  String?
   timing      String?

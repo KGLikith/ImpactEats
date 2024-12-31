@@ -202,7 +202,7 @@ export const getNotifications = async () => {
   }
 };
 
-export const getHistory = async () => {
+export const getDonorHistory = async () => {
   try {
     const user = await currentUser();
     if (!user) return { status: 404 };
@@ -232,6 +232,7 @@ export const getHistory = async () => {
                 requestId: true,
                 createdAt: true,
                 updatedAt: true,
+                donor: true,
                 claim:{
                   select:{
                     id: true,
@@ -335,7 +336,7 @@ export const getContributions = async () => {
           select: {
             claims: {
               where: {
-                status: "COMPLETED",
+                status: "RECIEVED",
               },
               select: {
                 id: true,
