@@ -21,7 +21,7 @@ export const useMutationData = (
     //   onSuccess && onSuccess(variables);
     //   return variables;
     // },
-    onSuccess: (data) => {
+    onSuccess: async(data) => {
       console.log("Mutation Data:", data);
       if(onSuccess)
         onSuccess(data);

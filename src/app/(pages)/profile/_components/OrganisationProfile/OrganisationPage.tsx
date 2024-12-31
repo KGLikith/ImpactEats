@@ -49,7 +49,7 @@ export default function OrganisationPage({ user }: Props) {
     <div className="flex gap-6 ">
       <div className="flex gap-6 flex-col flex-1 justify-start">
         <ProfilePicture
-          userImage={user.imageUrl || ""}
+          userImage={userType.imageUrl || user.imageUrl || ""}
           id={user.id}
           type={user.type}
         />

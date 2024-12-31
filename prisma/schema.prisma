@@ -97,13 +97,13 @@ enum Status {
 
 model Donation {
   id                   String       @id @default(cuid())
+  name                 String
   description          String?
   imageUrl             String?
   foodType             FoodType     @default(RAW)
   address              String
   email                String
   phone                String
-  name                 String
   additionDeliveryNote String?
   quantity             Float
   quantityUnit         QuantityUnit @default(PERSON)
@@ -165,8 +165,11 @@ model Request {
   Organisation   Organisation  @relation(fields: [organisationId], references: [id], onDelete: Cascade)
   foodType       FoodType      @default(RAW)
   quantity       Float
+  name           String
   quantityUnit   QuantityUnit  @default(PERSON)
   description    String?
+  requiredDate   String
+  requiredTime   String
   status         RequestStatus @default(PENDING)
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
@@ -175,12 +178,13 @@ model Request {
 
 enum RequestStatus {
   PENDING
+  DONATED
   COMPLETED
 }
 
 model Claim {
   id             String       @id @default(cuid())
-  status         Status       @default(PENDING)
+  status         ClaimStatus       @default(CLAIMED)
   task           Task         @relation(fields: [taskId], references: [id], onDelete: Cascade)
   taskId         String       @unique
   organisationId String
@@ -192,9 +196,10 @@ model Claim {
 }
 
 enum ClaimStatus {
-  PENDING
+  CLAIMED
   ASSIGNED
   RECIEVED
+  CANCELLED
 }
 
 model Task {

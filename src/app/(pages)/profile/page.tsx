@@ -57,7 +57,7 @@ export default function Page() {
           <h2 className={cn("text-xl font-bold ")}>User Details</h2>
           <div className={cn("w-full flex gap-6")}>
             <ProfilePage user={user} />
-            <ProfilePicture userImage={user.imageUrl || ""} id={user.id} />
+            <ProfilePicture userImage={user.imageUrl || ""} type={user.type} id={user.id} />
           </div>
         </div>
       )}

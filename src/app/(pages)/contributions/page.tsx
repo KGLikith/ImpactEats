@@ -81,10 +81,6 @@ export default function Page() {
   }
   const { data: contributionData } = contributions as ContributionsResponse;
   const { task, donations, claims } = contributionData;
-  console.log("contributions", contributionData);
-  console.log("task", task);
-  console.log("donations", donations);
-  console.log("claims", claims);
 
   return (
     <div className="p-4 h-screen">

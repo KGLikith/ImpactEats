@@ -4,9 +4,11 @@ import Donate from "@/components/icons/donate";
 import {
   Bell,
   Building2,
+  Group,
   History,
   LayoutDashboardIcon,
   User,
+  Users,
 } from "lucide-react";
 import { JSX } from "react";
 
@@ -82,8 +84,13 @@ export const ORGANISATION_SIDE_BAR_MENU: SIDE_BAR_MENU_PROPS[] = [
     path: "dashboard",
   },
   {
+    label: "Claims",
+    icon: <Users />,
+    path: "claims",
+  },
+  {
     label: "Your Volunteers",
-    icon: <Building2 />,
+    icon: <Users />,
     path: "volunteers",
   },
   ...BOTTOM_SIDE_BAR_MENU, 

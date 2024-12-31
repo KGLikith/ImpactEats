@@ -19,14 +19,14 @@ export async function GET(req: NextRequest) {
           userId: id,
         },
       });
-      if (userType) return NextResponse.json({ userType });
+      if (userType) return NextResponse.json({ userType,type });
     } else if (type === "Volunteer") {
       const userType = await client.volunteer.findUnique({
         where: {
           userId: id,
         },
       });
-      if (userType) return NextResponse.json({ userType });
+      if (userType) return NextResponse.json({ userType,type });
     } else if (type === "Donor") {
       const userType = await client.donor.findUnique({
         where: {

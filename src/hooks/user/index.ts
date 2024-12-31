@@ -25,13 +25,10 @@ export const useGetCurrentUserTypeInfo = () => {
         const result = await fetch(`/api/user`);
         const { user } = await result.json();
         if (!user) return null;
-        // console.log(user)
         const userTypeResult = await fetch(
           `/api/user/type?id=${user.id}&type=${user.type}`
         );
         const { userType, type } = await userTypeResult.json();
-
-        // console.log("userType", userType);
         return { ...userType, type };
       } catch (err) {
         console.log(err);

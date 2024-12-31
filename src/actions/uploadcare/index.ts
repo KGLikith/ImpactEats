@@ -1,7 +1,7 @@
 "use server";
 import { client } from "@/lib/prisma";
 
-export const onDeleteImage = async (id: string) => {
+export const onDeleteImage = async (id: string, type: string) => {
   try {
     const response = await client.user.update({
       where: {
@@ -11,6 +11,34 @@ export const onDeleteImage = async (id: string) => {
         imageUrl: "",
       },
     });
+    if (type === "organisation") {
+      await client.organisation.update({
+        where: {
+          userId: id,
+        },
+        data: {
+          imageUrl: "",
+        },
+      });
+    } else if (type === "Volunteer") {
+      await client.volunteer.update({
+        where: {
+          userId: id,
+        },
+        data: {
+          imageUrl: "",
+        },
+      });
+    } else if (type === "Donor") {
+      await client.donor.update({
+        where: {
+          userId: id,
+        },
+        data: {
+          imageUrl: "",
+        },
+      });
+    }
     return response;
   } catch (err) {
     console.log(err);
@@ -18,7 +46,11 @@ export const onDeleteImage = async (id: string) => {
   }
 };
 
-export const onUploadImage = async (id: string, imageUrl: string) => {
+export const onUploadImage = async (
+  id: string,
+  imageUrl: string,
+  type: string
+) => {
   try {
     const response = await client.user.update({
       where: {
@@ -28,6 +60,35 @@ export const onUploadImage = async (id: string, imageUrl: string) => {
         imageUrl: imageUrl,
       },
     });
+    console.log(type);
+    if (type === "Organisation") {
+      await client.organisation.update({
+        where: {
+          userId: id,
+        },
+        data: {
+          imageUrl: imageUrl,
+        },
+      });
+    } else if (type === "Volunteer") {
+      await client.volunteer.update({
+        where: {
+          userId: id,
+        },
+        data: {
+          imageUrl: imageUrl,
+        },
+      });
+    } else if (type === "Donor") {
+      await client.donor.update({
+        where: {
+          userId: id,
+        },
+        data: {
+          imageUrl: imageUrl,
+        },
+      });
+    }
     return response;
   } catch (err) {
     console.log(err);

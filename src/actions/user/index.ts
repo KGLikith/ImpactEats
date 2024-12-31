@@ -215,17 +215,7 @@ export const getHistory = async () => {
           orderBy: {
             createdAt: "desc",
           },
-          select: {
-            id: true,
-            type: true,
-            action: true,
-            description: true,
-            timing: true,
-            message: true,
-            link: true,
-            updatedAt: true,
-            donationId: true,
-            header: true,
+          include: {
             donation: {
               select:{
                 id: true,

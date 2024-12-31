@@ -12,7 +12,8 @@ import UploadCareButton from "./UploadCareButton";
 type Props = {
   id: string;
   userImage: string;
-  type?: string
+  type: string
+  
 };
 
 const ProfilePicture = ({ id, userImage,type }: Props) => {
@@ -20,7 +21,7 @@ const ProfilePicture = ({ id, userImage,type }: Props) => {
   const queryclient = useQueryClient();
 
   const onRemoveProfileImage = async () => {
-    const response = await onDeleteImage(id);
+    const response = await onDeleteImage(id,type);
     await queryclient.invalidateQueries({
       queryKey: ["currentUser"],
     });
@@ -30,7 +31,7 @@ const ProfilePicture = ({ id, userImage,type }: Props) => {
   };
 
   const onupload = async (image: string) => {
-    const response = await onUploadImage(id, image);
+    const response = await onUploadImage(id, image,type);
     await queryclient.invalidateQueries({
       queryKey: ["currentUser"],
     });
@@ -43,7 +44,7 @@ const ProfilePicture = ({ id, userImage,type }: Props) => {
     <div className="flex flex-col flex-1">
       <p className="font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-lg ">
 
-       { !type?"Profile Picture":"Organisation Logo"}
+       {type!=="Organisation"?"Profile Picture":"Organisation Logo"}
       </p>
       <div className="flex h-[40vh] flex-col items-center justify-center">
         {userImage ? (
