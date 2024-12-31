@@ -64,6 +64,7 @@ export const donationSchema = z
   });
 
 export type DonationType = {
+  id?: string;
   foodType: "RAW" | "COOKED" | "PACKAGED";
   description?: string;
   name: string;

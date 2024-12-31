@@ -35,7 +35,6 @@ export const useCreateDonationHook = (defaultData?: DefaultOptions) => {
         await queryClient.invalidateQueries({
           queryKey: ["user-notifications"],
         });
-        console.log("helloh");
       }
     },
     (error) => {

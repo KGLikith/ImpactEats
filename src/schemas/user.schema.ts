@@ -26,6 +26,7 @@ export type volunteerType={
   phone: string;
   imageUrl?: string;
   address: string;
+  createdAt?: string;
 }
 
 export type OrganisationType={

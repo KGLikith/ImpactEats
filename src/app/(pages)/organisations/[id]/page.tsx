@@ -8,7 +8,7 @@ import { Separator } from "@/components/ui/separator";
 import { useQueryData } from "@/hooks/useQueryData";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useGetCurrentUserTypeInfo, useGetUser } from "@/hooks/user";
 import { toast } from "@/hooks/use-toast";
@@ -50,6 +50,7 @@ type organisation = {
 };
 type pendingClaims = {
   id: string;
+  createdAt: string;
   status: string;
   donationId: string;
   donation: {
@@ -70,6 +71,7 @@ type completedClaims = {
   id: string;
   status: string;
   donationId: string;
+  createdAt: string;
   donation: {
     id: string;
     name: string;
@@ -100,6 +102,7 @@ export default function OrganisationProfile() {
       });
     }
   );
+  const router = useRouter();
   const { userType, isLoading: userLoading } = useGetCurrentUserTypeInfo();
   const { data: organisation, isLoading } = useQueryData(
     ["organisation", id],
@@ -290,11 +293,41 @@ export default function OrganisationProfile() {
                   ) : (
                     <>
                       {pendingClaims.map((claim) => (
-                        <div key={claim.id} className="border-b py-4">
-                          <p className="text-gray-600">{claim.donation.name}</p>
-                          <p className="text-sm text-gray-500">
-                            {claim.donation.description}
+                        <div
+                          key={claim.id}
+                          className="bg-white shadow-md rounded-lg p-4 mb-4 flex flex-col gap-2"
+                        >
+                          {/* Donation Name */}
+                          <h3 className="text-lg font-semibold text-gray-800">
+                            {claim.donation.name}
+                          </h3>
+
+                          {/* Donation Description */}
+                          <p className="text-sm text-gray-600">
+                            {claim.donation.description ||
+                              "No description available."}
                           </p>
+
+                          {/* Additional Information */}
+                          <div className="text-sm text-gray-500">
+                            <p>
+                              <strong>Claimed on:</strong>{" "}
+                              {new Date(claim.createdAt).toLocaleDateString() ||
+                                "Unknown date"}
+                            </p>
+                          </div>
+
+                          {/* Action Button */}
+                          <div className="mt-3">
+                            <button
+                              onClick={() =>
+                                router.push(`/donation/${claim.donationId}`)
+                              }
+                              className="text-blue-600 hover:text-blue-800 underline text-sm"
+                            >
+                              View Details
+                            </button>
+                          </div>
                         </div>
                       ))}
                     </>
@@ -310,11 +343,41 @@ export default function OrganisationProfile() {
                   ) : (
                     <>
                       {completedClaims.map((claim) => (
-                        <div key={claim.id} className="border-b py-4">
-                          <p className="text-gray-600">{claim.donation.name}</p>
-                          <p className="text-sm text-gray-500">
-                            {claim.donation.description}
+                        <div
+                          key={claim.id}
+                          className="bg-white shadow-md rounded-lg p-4 mb-4 flex flex-col gap-2"
+                        >
+                          {/* Donation Name */}
+                          <h3 className="text-lg font-semibold text-gray-800">
+                            {claim.donation.name}
+                          </h3>
+
+                          {/* Donation Description */}
+                          <p className="text-sm text-gray-600">
+                            {claim.donation.description ||
+                              "No description available."}
                           </p>
+
+                          {/* Additional Information */}
+                          <div className="text-sm text-gray-500">
+                            <p>
+                              <strong>Claimed on:</strong>{" "}
+                              {new Date(claim.createdAt).toLocaleDateString() ||
+                                "Unknown date"}
+                            </p>
+                          </div>
+
+                          {/* Action Button */}
+                          <div className="mt-3">
+                            <button
+                              onClick={() =>
+                                router.push(`/donation/${claim.donationId}`)
+                              }
+                              className="text-blue-600 hover:text-blue-800 underline text-sm"
+                            >
+                              View Details
+                            </button>
+                          </div>
                         </div>
                       ))}
                     </>
@@ -349,8 +412,44 @@ export default function OrganisationProfile() {
                         <p className="text-lg font-medium text-gray-900">
                           {vol.name}
                         </p>
-                        <p className="text-sm text-gray-500">{vol.email}</p>
-                        <p className="text-sm text-gray-500">{vol.phone}</p>
+                        {/* Email as a clickable mailto link */}
+                        <a
+                          href={`mailto:${vol.email}`}
+                          className="text-sm text-blue-600 underline"
+                        >
+                          {vol.email}
+                        </a>
+                        {/* Phone number with copy functionality */}
+                        <p className="text-sm text-gray-500 flex items-center gap-2 mt-1">
+                          {vol.phone}
+                          <button
+                            onClick={() => {
+                              toast({
+                                title: "Phone number copied",
+                                description: "Phone number copied to clipboard",
+                                duration: 3000,
+                              });
+                              navigator.clipboard.writeText(vol.phone);
+                            }}
+                            className="text-blue-500 hover:text-blue-700"
+                            title="Copy phone number"
+                          >
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              strokeWidth={1.5}
+                              stroke="currentColor"
+                              className="h-4 w-4"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M15.75 6.75h3.75m-7.5 10.5h-3m-1.5-9.75a2.25 2.25 0 00-2.25 2.25v9a2.25 2.25 0 002.25 2.25h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25h-9z"
+                              />
+                            </svg>
+                          </button>
+                        </p>
                       </div>
 
                       {/* Additional Action (Optional) */}
@@ -358,6 +457,7 @@ export default function OrganisationProfile() {
                         <Button
                           variant="outline"
                           size="sm"
+                          onClick={() => router.push(`/volunteers/${vol.id}`)}
                           className="text-blue-600 border-blue-600"
                         >
                           View Profile

@@ -98,7 +98,6 @@ export default function DonationPage({ donationId }: Props) {
         </p>
       </div>
     );
-  console.log(donationData);
 
   return (
     <div className="container mx-auto p-4">

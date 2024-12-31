@@ -38,14 +38,6 @@ type OrganisationType = {
 type userType = UserTypeInfo & {
   organisations?: {
     id: string;
-    name: true;
-    email: true;
-    phone: true;
-    address: true;
-    website: true;
-    imageUrl: true;
-    description: true;
-    createdAt: true;
   }[];
 };
 
@@ -120,7 +112,6 @@ export default function Organisations() {
     );
   }
 
-  // Filter organizations based on search term and volunteer filter
   const filteredOrganisations = organisationsData.filter((org) => {
     const matchesSearch =
       org.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -128,7 +119,7 @@ export default function Organisations() {
       org.address.toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesVolunteerFilter =
-      !showVolunteerOnly || org._count.volunteers > 0;
+      !showVolunteerOnly || userType?.organisations?.find((o) => o.id === org.id);
 
     return matchesSearch && matchesVolunteerFilter;
   });

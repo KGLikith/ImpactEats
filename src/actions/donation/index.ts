@@ -26,6 +26,7 @@ export const createDonation = async (data: DonationFormData) => {
       },
     });
     let user;
+    console.log(data.userType)
     if (data.userType === "Donor") {
       console.log(data.donorId);
       user = await client.donor.findUnique({
@@ -39,7 +40,7 @@ export const createDonation = async (data: DonationFormData) => {
       });
     }
     if (!user?.userId) return { status: 400, data: null };
-
+    console.log(user.userId)
     await client.notification.create({
       data: {
         type: "Donation",

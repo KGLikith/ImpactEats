@@ -74,7 +74,7 @@ export const getUserTypeWithVolunteers = async () => {
       where: {
         clerkId: currentuser.id,
       },
-    })
+    });
     if (!user) return null;
 
     if (user.type === "Organisation") {
@@ -85,12 +85,14 @@ export const getUserTypeWithVolunteers = async () => {
       });
       if (userType) return { status: 200, data: userType };
     } else if (user.type === "Volunteer") {
-      const userType = await getVolunteerInfo(user.id);
+      const userType = await getVolunteerInfobyUserId(user.id);
 
-      if (userType) return { status: 200, data:{ ...userType.data, type: user.type} };
+      if (userType)
+        return { status: 200, data: { ...userType.data, type: user.type } };
     } else if (user.type === "Donor") {
-      const userType = await getDonorInfo(user.id);
-      if (userType) return { status: 200, data: {...userType.data,type: user.type} };
+      const userType = await getDonorInfoByUserId(user.id);
+      if (userType)
+        return { status: 200, data: { ...userType.data, type: user.type } };
     }
 
     return { status: 400, data: [] };
@@ -100,15 +102,34 @@ export const getUserTypeWithVolunteers = async () => {
   }
 };
 
-export const getVolunteerInfo = async (id: string) => {
+export const getVolunteerInfobyUserId = async (id: string) => {
   try {
     const res = await client.volunteer.findUnique({
       where: { userId: id },
+      include: {
+        organisations: {
+          select: {
+            id: true,
+          },
+        },
+      },
+    });
+    return { status: 200, data: res };
+  } catch (err) {
+    console.log("error in fetching volunteer info", err);
+    return { status: 500, data: null };
+  }
+};
+export const getVolunteerInfo = async (id: string) => {
+  try {
+    const res = await client.volunteer.findUnique({
+      where: { id: id },
       include: {
         task: {
           include: {
             Claim: {
               include: {
+                donation: true,
                 organisation: true,
               },
             },
@@ -117,7 +138,12 @@ export const getVolunteerInfo = async (id: string) => {
         organisations: true,
         _count: {
           select: {
-            task: true,
+            task: {
+              where:{
+                status: 'COMPLETED'
+              }
+            },
+            organisations: true,
           },
         },
       },
@@ -129,15 +155,39 @@ export const getVolunteerInfo = async (id: string) => {
   }
 };
 
-export const getDonorInfo = async (id: string) => {
+export const getDonorInfoByUserId = async (id: string) => {
   try {
     const res = await client.donor.findUnique({
       where: { userId: id },
+    });
+    return { status: 200, data: res };
+  } catch (err) {
+    console.log("error in fetching donor info", err);
+    return { status: 500, data: null };
+  }
+};
+
+export const getDonorInfo = async (id: string) => {
+  try {
+    const res = await client.donor.findUnique({
+      where: { id },
       include: {
-        donations: true,
+        donations: {
+          include: {
+            claim: {
+              include: {
+                organisation: true,
+              },
+            },
+          },
+        },
         _count: {
           select: {
-            donations: true,
+            donations:{
+              where:{
+                status: 'COMPLETED'
+              }
+            }
           },
         },
       },

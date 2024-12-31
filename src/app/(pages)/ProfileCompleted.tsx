@@ -1,10 +1,17 @@
 "use client";
 import { useGetCurrentUserTypeInfo } from "@/hooks/user";
 import Link from "next/link";
-import React from "react";
+import React, { useEffect } from "react";
 
 export default function ProfileCompletedPage() {
   const { userType, isLoading } = useGetCurrentUserTypeInfo();
+  const [user,setUser] = React.useState(userType);
+
+  useEffect(()=>{
+    if(userType){
+      setUser(userType);
+    }
+  })
 
   if (isLoading) return <></>;
   return (
