@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { getVolunteers } from "@/actions/organisations";
 import Loader from "@/components/ui/loader";
@@ -8,8 +8,9 @@ import React, { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Phone, Mail, MapPin } from 'lucide-react';
+import { Phone, Mail, MapPin } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import Link from "next/link";
 
 type Props = {
   organisation: UserTypeInfo;
@@ -46,7 +47,7 @@ export default function VolunteerList({ organisation }: Props) {
       title: "Phone copied",
       description: "Phone number copied to clipboard",
       duration: 2000,
-    })
+    });
     navigator.clipboard.writeText(phone);
     console.log("Phone copied", phone);
   };
@@ -59,9 +60,10 @@ export default function VolunteerList({ organisation }: Props) {
     );
   }
 
-  const filteredVolunteers = volunteers?.filter((volunteer) =>
-    volunteer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    volunteer.email.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredVolunteers = volunteers?.filter(
+    (volunteer) =>
+      volunteer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      volunteer.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -74,27 +76,32 @@ export default function VolunteerList({ organisation }: Props) {
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
       />
-      {error && (
-        <p className="text-red-500 mb-4">{error}</p>
-      )}
+      {error && <p className="text-red-500 mb-4">{error}</p>}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredVolunteers.map((volunteer) => (
           <Card
             key={volunteer.id}
             className="overflow-hidden hover:shadow-lg transition-shadow duration-200"
           >
-            <CardHeader className="pb-0">
-              <div className="flex items-center space-x-4">
-                <Avatar className="h-16 w-16">
-                  <AvatarImage
-                    src={volunteer.imageUrl || '/placeholder.svg?height=64&width=64'}
-                    alt={`${volunteer.name}'s avatar`}
-                  />
-                  <AvatarFallback>{volunteer.name.charAt(0)}</AvatarFallback>
-                </Avatar>
-                <CardTitle className="text-lg font-semibold">{volunteer.name}</CardTitle>
-              </div>
-            </CardHeader>
+            <Link href={`/volunteers/${volunteer.id}`}>
+              <CardHeader className="pb-0">
+                <div className="flex items-center space-x-4">
+                  <Avatar className="h-16 w-16">
+                    <AvatarImage
+                      src={
+                        volunteer.imageUrl ||
+                        "/placeholder.svg?height=64&width=64"
+                      }
+                      alt={`${volunteer.name}'s avatar`}
+                    />
+                    <AvatarFallback>{volunteer.name.charAt(0)}</AvatarFallback>
+                  </Avatar>
+                  <CardTitle className="text-lg font-semibold">
+                    {volunteer.name}
+                  </CardTitle>
+                </div>
+              </CardHeader>
+            </Link>
             <CardContent className="pt-4 space-y-4">
               <div className="flex items-center space-x-2">
                 <Mail className="h-4 w-4 text-muted-foreground" />
@@ -110,7 +117,9 @@ export default function VolunteerList({ organisation }: Props) {
                 onClick={() => handleCopyPhone(volunteer.phone)}
               >
                 <Phone className="h-4 w-4 text-muted-foreground group-hover:text-green-600" />
-                <span className="text-sm group-hover:text-green-600">{volunteer.phone}</span>
+                <span className="text-sm group-hover:text-green-600">
+                  {volunteer.phone}
+                </span>
               </div>
               <div className="flex items-center space-x-2">
                 <MapPin className="h-4 w-4 text-muted-foreground" />

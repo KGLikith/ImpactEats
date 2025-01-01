@@ -19,6 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import Link from "next/link";
 
 type Props = {
   userType: UserTypeInfo;
@@ -28,6 +29,7 @@ type ClaimType = {
   id: string;
   status: "CLAIMED" | "ASSIGNED" | "RECIEVED" | "CANCELLED";
   donation: {
+    id: string;
     name: string;
     foodType: string;
     description: string;
@@ -98,7 +100,7 @@ export default function ClaimsList({ userType }: Props) {
       : claims.filter((claim) => claim.status === filter);
 
   return (
-    <div className="container mx-auto px-4 py-8 h-full">
+    <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold">Claims Dashboard</h1>
         <Select onValueChange={(value) => setFilter(value)} defaultValue="ALL">
@@ -119,7 +121,11 @@ export default function ClaimsList({ userType }: Props) {
         {filteredClaims.length !== 0 ? (
           <>
             {filteredClaims.map((claim) => (
-              <ClaimCard key={claim.id} claim={claim} />
+              <ClaimCard
+                key={claim.id}
+                claim={claim}
+                donationId={claim.donation.id}
+              />
             ))}
           </>
         ) : (
@@ -134,56 +140,69 @@ export default function ClaimsList({ userType }: Props) {
   );
 }
 
-function ClaimCard({ claim }: { claim: ClaimType }) {
+function ClaimCard({
+  claim,
+  donationId,
+}: {
+  claim: ClaimType;
+  donationId: string;
+}) {
   return (
-    <Card
-      className={`${statusColors[claim.status]} border-l-4 border-l-${
-        statusColors[claim.status].split(" ")[1]
-      }`}
-    >
-      <CardHeader>
-        <div className="flex justify-between items-center">
-          <CardTitle>{claim.donation.name}</CardTitle>
-          <Badge variant="secondary">{claim.status}</Badge>
-        </div>
-        <CardDescription>{claim.donation.foodType}</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <p className="mb-2">{claim.donation.description}</p>
-        <div className="flex items-center mb-2">
-          <CalendarIcon className="mr-2 h-4 w-4" />
-          <span>
-            Available:{" "}
-            {new Date(claim.donation.availableDate).toLocaleDateString()} at{" "}
-            {claim.donation.availableTime}
-          </span>
-        </div>
-        <div className="flex items-center mb-2">
-          <ClockIcon className="mr-2 h-4 w-4" />
-          <span>
-            Expires: {new Date(claim.donation.expiryDate).toLocaleDateString()}{" "}
-            at {claim.donation.expiryTime}
-          </span>
-        </div>
-        <div className="flex items-center mb-2">
-          <MapPinIcon className="mr-2 h-4 w-4" />
-          <span>
-            {claim.donation.deliveryOption} - {claim.donation.deliveryType}
-          </span>
-        </div>
-        <div className="flex items-center">
-          <UserIcon className="mr-2 h-4 w-4" />
-          <span>Donor: {claim.donation.donor.name}</span>
-        </div>
-        {claim.task && (
-          <div className="mt-4">
-            <Badge className={taskStatusColors[claim.task.status]}>
-              {claim.task.status}
-            </Badge>
-            <p className="mt-2">Volunteer: {claim.task.volunteer.name}</p>
+    <Link href={`/donations/${donationId}`}>
+      <Card
+        className={`bg-zinc-100 border-l-4 border-l-${
+          statusColors[claim.status].split(" ")[1]
+        }`}
+      >
+        <CardHeader>
+          <div className="flex justify-between items-center">
+            <CardTitle>{claim.donation.name}</CardTitle>
+            <Badge variant="default">{claim.status}</Badge>
           </div>
-        )}
-      </CardContent>
-    </Card>
+          <CardDescription>{claim.donation.foodType}</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <p className="mb-2">{claim.donation.description}</p>
+          <div className="flex items-center mb-2">
+            <CalendarIcon className="mr-2 h-4 w-4" />
+            <span>
+              Available:{" "}
+              {new Date(claim.donation.availableDate).toLocaleDateString()} at{" "}
+              {claim.donation.availableTime}
+            </span>
+          </div>
+          <div className="flex items-center mb-2">
+            <ClockIcon className="mr-2 h-4 w-4" />
+            <span>
+              Expires:{" "}
+              {new Date(claim.donation.expiryDate).toLocaleDateString()} at{" "}
+              {claim.donation.expiryTime}
+            </span>
+          </div>
+          <div className="flex items-center mb-2">
+            <MapPinIcon className="mr-2 h-4 w-4" />
+            <span>
+              {claim.donation.deliveryOption} - {claim.donation.deliveryType}
+            </span>
+          </div>
+          <div className="flex items-center">
+            <UserIcon className="mr-2 h-4 w-4" />
+            <span>Donor: {claim.donation.donor.name}</span>
+          </div>
+          {claim.task && (
+            <div className="mt-4">
+              <Badge
+                className={`${
+                  taskStatusColors[claim.task.status]
+                } hover:bg-white`}
+              >
+                {claim.task.status}
+              </Badge>
+              <p className="mt-2">Volunteer: {claim.task.volunteer.name}</p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </Link>
   );
 }

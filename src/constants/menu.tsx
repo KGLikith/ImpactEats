@@ -1,6 +1,7 @@
 "use client";
-import Contribution from "@/components/icons/contribution";
+import Delivery from "@/components/icons/delivery";
 import Donate from "@/components/icons/donate";
+import TakeAway from "@/components/icons/take";
 import {
   Bell,
   Building2,
@@ -16,8 +17,6 @@ type SIDE_BAR_MENU_PROPS = {
   icon: JSX.Element;
   path: string;
 };
-
-
 
 export const BOTTOM_SIDE_BAR_MENU: SIDE_BAR_MENU_PROPS[] = [
   {
@@ -36,16 +35,11 @@ export const BOTTOM_SIDE_BAR_MENU: SIDE_BAR_MENU_PROPS[] = [
     path: "notifications",
   },
   {
-    label: "Contributions",
-    icon: <Contribution />,
-    path: "contributions",
-  },
-  {
     label: "Profile",
     icon: <User />,
     path: "profile",
   },
-]
+];
 
 export const DONOR_SIDE_BAR_MENU: SIDE_BAR_MENU_PROPS[] = [
   {
@@ -58,8 +52,8 @@ export const DONOR_SIDE_BAR_MENU: SIDE_BAR_MENU_PROPS[] = [
     icon: <Donate />,
     path: "donate",
   },
-  ...BOTTOM_SIDE_BAR_MENU, 
-  
+
+  ...BOTTOM_SIDE_BAR_MENU,
 ];
 
 export const VOLUNTEER_SIDE_BAR_MENU: SIDE_BAR_MENU_PROPS[] = [
@@ -70,10 +64,10 @@ export const VOLUNTEER_SIDE_BAR_MENU: SIDE_BAR_MENU_PROPS[] = [
   },
   {
     label: "Volunteer",
-    icon: <Contribution />,
+    icon: <Delivery />,
     path: "volunteer",
   },
-  ...BOTTOM_SIDE_BAR_MENU, 
+  ...BOTTOM_SIDE_BAR_MENU,
 ];
 
 export const ORGANISATION_SIDE_BAR_MENU: SIDE_BAR_MENU_PROPS[] = [
@@ -83,8 +77,13 @@ export const ORGANISATION_SIDE_BAR_MENU: SIDE_BAR_MENU_PROPS[] = [
     path: "dashboard",
   },
   {
+    label: "Donations",
+    icon: <Donate />,
+    path: "donations",
+  },
+  {
     label: "Claims",
-    icon: <Users />,
+    icon: <TakeAway />,
     path: "claims",
   },
   {
@@ -92,5 +91,5 @@ export const ORGANISATION_SIDE_BAR_MENU: SIDE_BAR_MENU_PROPS[] = [
     icon: <Users />,
     path: "volunteers",
   },
-  ...BOTTOM_SIDE_BAR_MENU, 
+  ...BOTTOM_SIDE_BAR_MENU,
 ];

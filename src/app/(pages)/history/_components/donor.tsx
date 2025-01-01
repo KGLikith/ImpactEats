@@ -1,6 +1,5 @@
 import React from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Building2 } from 'lucide-react';
 
 type OrganizationProps = {
@@ -11,24 +10,19 @@ type OrganizationProps = {
   imageUrl: string;
 };
 
-export function Donor({  name, email, phone, imageUrl }: OrganizationProps) {
+export function Donor({ name, email, phone, imageUrl }: OrganizationProps) {
   return (
-    <Card className="w-full">
-      <CardHeader className="flex flex-row items-center gap-4">
-        <Avatar>
-          <AvatarImage src={imageUrl} alt={name} />
-          <AvatarFallback><Building2 /></AvatarFallback>
-        </Avatar>
-        <div>
-          <CardTitle className="text-lg">{name}
-          </CardTitle>
-          <p className="text-sm text-muted-foreground">{email}</p>
-        </div>
-      </CardHeader>
-      <CardContent>
+    <div className="flex flex-row items-start gap-4 w-full">
+      <Avatar>
+        <AvatarImage src={imageUrl} alt={name} />
+        <AvatarFallback><Building2 /></AvatarFallback>
+      </Avatar>
+      <div>
+        <h3 className="text-lg font-semibold">{name}</h3>
+        <p className="text-sm text-muted-foreground">{email}</p>
         <p className="text-sm">Phone: {phone}</p>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }
 

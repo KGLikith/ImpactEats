@@ -184,9 +184,8 @@ enum RequestStatus {
 
 model Claim {
   id             String       @id @default(cuid())
-  status         ClaimStatus       @default(CLAIMED)
-  task           Task         @relation(fields: [taskId], references: [id], onDelete: Cascade)
-  taskId         String       @unique
+  status         ClaimStatus  @default(CLAIMED)
+  task           Task?
   organisationId String
   organisation   Organisation @relation(fields: [organisationId], references: [id])
   donationId     String       @unique
@@ -209,7 +208,8 @@ model Task {
   status      TaskStatus @default(PENDING)
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
-  Claim       Claim?
+  Claim       Claim      @relation(fields: [claimId], references: [id], onDelete: Cascade)
+  claimId     String      @unique
 }
 
 enum TaskStatus {

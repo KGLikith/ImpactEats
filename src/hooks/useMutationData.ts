@@ -28,9 +28,13 @@ export const useMutationData = (
       return data;
     },
     onError:(error)=>{
+      console.log(error)
       if(onError)
         onError(error);
       return error;
+    },
+    onMutate: async (variables) => {
+      console.log("Mutation Data:", variables);
     },
     onSettled: async () => {
       return await client.invalidateQueries({

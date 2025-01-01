@@ -26,7 +26,7 @@ export const createDonation = async (data: DonationFormData) => {
       },
     });
     let user;
-    console.log(data.userType)
+    console.log(data.userType);
     if (data.userType === "Donor") {
       console.log(data.donorId);
       user = await client.donor.findUnique({
@@ -40,7 +40,7 @@ export const createDonation = async (data: DonationFormData) => {
       });
     }
     if (!user?.userId) return { status: 400, data: null };
-    console.log(user.userId)
+    console.log(user.userId);
     await client.notification.create({
       data: {
         type: "Donation",
@@ -49,7 +49,7 @@ export const createDonation = async (data: DonationFormData) => {
         action: "Created",
         message:
           "You created a donation and is waiting to be claimed by an organisation",
-        link: `/donation/${res.id}`,
+        link: `/donations/${res.id}`,
         isRead: false,
       },
     });
@@ -66,8 +66,8 @@ export const createDonation = async (data: DonationFormData) => {
             : `You donated a ${data.name} for ${data.quantity} people`,
         message:
           "You created a donation and is waiting to be claimed by an organisation",
-        timing: `Donation form submitted on ${new Date().toLocaleString()} \n `,
-        link: `/donation/${res.id}`,
+        timing: `Donation form submitted on ${new Date().toLocaleString()} \n, `,
+        link: `/donations/${res.id}`,
       },
     });
     return { status: 200, data: res };
@@ -102,6 +102,7 @@ export const getDonationDetails = async (id: string) => {
                 email: true,
                 phone: true,
                 address: true,
+                volunteers: true,
               },
             },
             task: {
@@ -133,3 +134,300 @@ export const getDonationDetails = async (id: string) => {
     return { status: 500, data: null };
   }
 };
+
+export const getAllDonations = async () => {
+  try {
+    const currentDateTime = new Date();
+
+    const data = await client.donation.findMany({
+      where: {
+        status: "PENDING",
+        AND: [
+          {
+            OR: [
+              {
+                expiryDate: {
+                  lt: currentDateTime.toISOString().split("T")[0],
+                },
+              },
+              {
+                AND: [
+                  { expiryDate: currentDateTime.toISOString().split("T")[0] },
+                  {
+                    expiryTime: {
+                      lt: currentDateTime.toTimeString().slice(0, 5),
+                    },
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+      include: {
+        donor: true,
+      },
+      orderBy: {
+        createdAt: "asc",
+      },
+    });
+    return { status: 200, data: data };
+  } catch (err) {
+    console.log(err)
+    return { status: 500, data: null };
+  }
+};
+
+export const handleClaimDonation = async (
+  donationId: string,
+  organisationId: string
+) => {
+  console.log(donationId, organisationId);
+  try {
+    const res = await client.claim.create({
+      data: {
+        status: "CLAIMED",
+        donationId: donationId,
+        organisationId: organisationId,
+      },
+      select: {
+        organisation: {
+          select: {
+            name: true,
+            userId: true,
+          },
+        },
+        donation: {
+          select: {
+            donor: {
+              select: {
+                name: true,
+                userId: true,
+              },
+            },
+          },
+        },
+      },
+    });
+    await client.donation.update({
+      where: {
+        id: donationId,
+      },
+      data: {
+        status: "CLAIMED",
+      },
+    });
+    await client.notification.create({
+      data: {
+        type: "Donation",
+        userId: res.organisation.userId,
+        header: "New Claim",
+        action: "Claimed",
+        message:
+          "You claimed a donation and is waiting for the volunteer to accept",
+        link: `/donations/${donationId}`,
+        isRead: false,
+      },
+    });
+    await client.history.create({
+      data: {
+        type: "Donation",
+        userId: res.organisation.userId,
+        header: "Donation",
+        action: "Claimed",
+        donationId: donationId,
+        description: `You claimed a donation from ${
+          res.donation.donor?.name ?? "unknown donor"
+        }`,
+        message:
+          "You claimed a donation and is waiting for the volunteer to accept",
+        timing: `Claimed on ${new Date().toLocaleString()}, \n `,
+        link: `/donations/${donationId}`,
+      },
+    });
+    if (res.donation.donor?.userId) {
+      await client.notification.create({
+        data: {
+          type: "Donation",
+          userId: res.donation.donor.userId,
+          header: "Donation Claimed",
+          action: "Claimed",
+          message: `Your donation has been claimed by ${res.organisation?.name}`,
+          link: `/donations/${donationId}`,
+          isRead: false,
+        },
+      });
+      const history = await client.history.findFirst({
+        where: {
+          AND: [
+            { userId: res.donation.donor.userId },
+            { donationId: donationId },
+          ],
+        },
+      });
+      await client.history.update({
+        where: {
+          id: history?.id,
+        },
+        data: {
+          action: "Claimed",
+          message: `Your donation has been claimed by ${res.organisation?.name}`,
+          timing: `${
+            history?.timing || ""
+          } Claimed on ${new Date().toLocaleString()},\n`,
+        },
+      });
+      console.log("notification sent to donor");
+    }
+    console.log(res);
+    return res;
+  } catch (err) {
+    throw new Error((err as Error).message);
+  }
+};
+
+export const handleVolunteerForDonation = async (
+  donationId: string,
+  volunteerId: string,
+  claimId: string
+) => {
+  console.log(donationId, volunteerId, claimId);
+  try {
+    const res = await client.task.create({
+      data: {
+        status: "PENDING",
+        volunteerId: volunteerId,
+        claimId: claimId,
+      },
+      select: {
+        volunteer: {
+          select: {
+            name: true,
+            userId: true,
+          },
+        },
+        Claim: {
+          select: {
+            organisation: {
+              select: {
+                name: true,
+                userId: true,
+              },
+            },
+            donation: {
+              select: {
+                name: true,
+                id: true,
+                donor: {
+                  select: {
+                    name: true,
+                    userId: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+    await client.claim.update({
+      where: {
+        id: claimId,
+      },
+      data: {
+        status: "ASSIGNED",
+      },
+    });
+    await client.notification.create({
+      data: {
+        type: "Volunteering",
+        userId: res.volunteer.userId,
+        header: "New Task",
+        action: "Assigned",
+        message: "You started volunteering for a donation",
+        link: `/donations/${donationId}`,
+        isRead: false,
+      },
+    });
+    await client.notification.create({
+      data: {
+        type: "Volunteering",
+        userId: res.Claim.organisation.userId,
+        header: "Task Assigned",
+        action: "Assigned",
+        message: `${res.volunteer.name} started volunteering for one of your claims `,
+        link: `/donations/${donationId}`,
+        isRead: false,
+      },
+    });
+    await client.notification.create({
+      data: {
+        type: "Volunteering",
+        userId: res.Claim.donation.donor?.userId ?? "",
+        header: "Task Assigned",
+        action: "Assigned",
+        message: `${res.volunteer.name} started volunteering for one of your donations `,
+        link: `/donations/${donationId}`,
+        isRead: false,
+      },
+    });
+    await client.history.create({
+      data: {
+        type: "Donation",
+        userId: res.volunteer.userId,
+        header: "New Task",
+        action: "Volunteering",
+        donationId: donationId,
+        description: "You started volunteering for a donation",
+        message:
+          "You started volunteering for a donation and is waiting for the pickup",
+        timing: `Volunteering started on ${new Date().toLocaleString()} \n `,
+        link: `/donations/${donationId}`,
+      },
+    });
+    const orgnaisationHistory = await client.history.findFirst({
+      where: {
+        AND: [
+          { userId: res.Claim.organisation.userId },
+          { donationId: donationId },
+        ],
+      },
+    });
+    await client.history.update({
+      where: {
+        id: orgnaisationHistory?.id
+      },
+      data: {
+        action: "Assigned",
+        message: `${res.volunteer.name} started volunteering for this claim`,
+        timing: `${
+          orgnaisationHistory?.timing || ""
+        } Assigned on ${new Date().toLocaleString()},\n`,
+      }
+    })
+    const donorHistory = await client.history.findFirst({
+      where: {
+        AND: [
+          { userId: res.Claim.donation.donor?.userId ?? "" },
+          { donationId: donationId },
+        ],
+      },
+    });
+    await client.history.update({
+      where: {
+        id: donorHistory?.id
+      },
+      data: {
+        action: "Assigned",
+        message: `${res.volunteer.name} started volunteering for this donations`,
+        timing: `${
+          donorHistory?.timing || ""
+        } Assigned on ${new Date().toLocaleString()},\n`,
+      }
+    })
+    return res;
+  } catch (err) {
+    throw new Error((err as Error).message);
+  }
+};
+

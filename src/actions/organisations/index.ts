@@ -78,6 +78,7 @@ export const getClaims = async (organisationId: string) => {
       include: {
         donation: {
           select: {
+            id: true,
             name: true,
             foodType: true,
             description: true,

@@ -17,6 +17,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { HistoryItem } from "../../HistoryList";
 import { Donor } from "../donor";
+import { Separator } from "@/components/ui/separator";
 
 type Props = {
   item: HistoryItem;
@@ -27,7 +28,7 @@ export default function Donationcard({ item, type }: Props) {
   return (
     <Card
       key={item.id}
-      className={`w-full border ${getCardStyle(
+      className={`w-full h-fit border ${getCardStyle(
         item.donation?.status || "DEFAULT"
       )}`}
     >
@@ -56,33 +57,38 @@ export default function Donationcard({ item, type }: Props) {
       <div className="flex w-full h-full justify-between items-start gap-4">
         <CardContent>
           <p>{item.description}</p>
-          {/* {getStatusMessage(item) && (
-                <p className="mt-2 text-sm font-medium text-blue-600">
-                  {getStatusMessage(item)}
-                </p>
-              )} */}
           <p className="mt-2 text-sm font-medium text-blue-600">
             {item.message}
           </p>
           {item.timing && (
-            <p className="mt-2 text-sm text-muted-foreground">{item.timing}</p>
+            <p className="mt-2 text-sm text-muted-foreground">
+              {item.timing?.split(",").map((part, index) => (
+                <React.Fragment key={index}>
+                  {part}
+                  {item.timing && index < item.timing.split(",")?.length - 1 && <br />}
+                </React.Fragment>
+              ))}
+            </p>
           )}
         </CardContent>
 
         {type !== "Donor" && (
-          <div>
-            <h3 className="text-lg font-semibold mb-2">Claimed Organization</h3>
+          <>
+          <Separator orientation="vertical" color="black" />
+          <div className="mb-3">
+            <h3 className="text-lg font-semibold mb-2">Donor</h3>
             {item.donation?.donor ? (
               <Donor {...item.donation.donor} />
             ) : (
               <p className="text-sm text-muted-foreground">No donor yet.</p>
             )}
           </div>
+          </>
         )}
 
         {/* Organisation */}
         {type !== "Organisation" && (
-          <div>
+          <div className="mb-3">
             <h3 className="text-lg font-semibold mb-2">Claimed Organization</h3>
             {item.donation?.claim?.organisation ? (
               <Organization {...item.donation.claim.organisation} />
@@ -107,13 +113,13 @@ export default function Donationcard({ item, type }: Props) {
             )}
           </div>
         )}
-          <CardFooter>
-            <Button asChild>
-              <Link href={item.link || `donation/${item.donationId}`}>
-                View Details
-              </Link>
-            </Button>
-          </CardFooter>
+        <CardFooter>
+          <Button asChild>
+            <Link href={item.link || `donation/${item.donationId}`}>
+              View Details
+            </Link>
+          </Button>
+        </CardFooter>
       </div>
     </Card>
   );

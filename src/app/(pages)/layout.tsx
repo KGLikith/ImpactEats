@@ -15,6 +15,7 @@ export default async function RootLayout({
   if (!authenticated?.user) {
     return null;
   }
+  
   return (
     <>
       <div className="flex h-screen w-full mb-20">
