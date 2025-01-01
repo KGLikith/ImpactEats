@@ -10,7 +10,7 @@ import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { useGetCurrentUserTypeInfo, useGetUser } from "@/hooks/user";
+import { useGetCurrentUserTypeInfo } from "@/hooks/user";
 import { toast } from "@/hooks/use-toast";
 import { useMutationData } from "@/hooks/useMutationData";
 import { useQueryClient } from "@tanstack/react-query";

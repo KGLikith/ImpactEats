@@ -2,7 +2,6 @@
 
 import { client } from "@/lib/prisma";
 import { currentUser } from "@clerk/nextjs/server";
-import { stat } from "fs";
 
 export const getAllOrganisations = async () => {
   try {

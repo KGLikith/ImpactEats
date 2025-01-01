@@ -5,18 +5,18 @@ import React, { useEffect } from "react";
 
 export default function ProfileCompletedPage() {
   const { userType, isLoading } = useGetCurrentUserTypeInfo();
-  const [user,setUser] = React.useState(userType);
+  const [user, setUser] = React.useState(userType);
 
-  useEffect(()=>{
-    if(userType){
+  useEffect(() => {
+    if (userType) {
       setUser(userType);
     }
-  })
+  });
 
   if (isLoading) return <></>;
   return (
     <>
-      {!isLoading  && !userType?.type && (
+      {!isLoading && !user?.type && (
         <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-4 rounded-md">
           <p className="font-semibold text-lg">
             Please complete your profile to continue with the application.

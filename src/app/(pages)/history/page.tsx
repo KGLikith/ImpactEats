@@ -4,9 +4,7 @@ import { useGetCurrentUserTypeInfo } from "@/hooks/user";
 import React from "react";
 import HistoryList from "./HistoryList";
 
-type Props = {};
-
-export default function HistoryPage({}: Props) {
+export default function HistoryPage() {
   const { userType, isLoading } = useGetCurrentUserTypeInfo();
   if (isLoading) {
     return (

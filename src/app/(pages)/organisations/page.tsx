@@ -1,7 +1,6 @@
 "use client";
 import {
   getAllOrganisations,
-  getAllOrganisationsWithVolunteers,
   getUserTypeWithVolunteers,
 } from "@/actions/global";
 import { addVolunteer } from "@/actions/organisations";
@@ -12,7 +11,7 @@ import Loader from "@/components/ui/loader";
 import { toast } from "@/hooks/use-toast";
 import { useMutationData } from "@/hooks/useMutationData";
 import { useQueryData } from "@/hooks/useQueryData";
-import { UserTypeInfo, volunteerType } from "@/schemas/user.schema";
+import { UserTypeInfo } from "@/schemas/user.schema";
 import { useQueryClient } from "@tanstack/react-query";
 import { MapPin, Phone, User, Globe, Mail } from "lucide-react";
 import Link from "next/link";
@@ -104,8 +103,7 @@ export default function Organisations() {
             No Organizations Found
           </h1>
           <p className="text-gray-500 mt-2">
-            We're sorry, but we couldn't find any organizations. Please try
-            again later.
+            {"We're sorry, but we couldn't find any organizations. Please try again later."}
           </p>
         </div>
       </div>

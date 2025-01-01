@@ -1,9 +1,5 @@
 "use client";
 import { getDonorHistory } from "@/actions/user";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-
-// import { Badge } from "@/components/ui/badge";
 import Loader from "@/components/ui/loader";
 import { useQueryData } from "@/hooks/useQueryData";
 import React, { useEffect } from "react";

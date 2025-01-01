@@ -1,7 +1,6 @@
 "use client";
 
 import { getDonationDetails } from "@/actions/donation";
-import { Button } from "@/components/ui/button";
 import Loader from "@/components/ui/loader";
 import { useQueryData } from "@/hooks/useQueryData";
 import { DonationType } from "@/schemas/donation-form.schema";

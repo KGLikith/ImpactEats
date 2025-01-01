@@ -6,9 +6,8 @@ import Link from "next/link";
 import React, { useEffect } from "react";
 import ClaimsList from "./_components/ClaimsList";
 
-type Props = {};
 
-export default function page({}: Props) {
+export default function ClaimsPage() {
   const [organisation, setOrganisation] = React.useState<UserTypeInfo>();
   const { userType, isLoading } = useGetCurrentUserTypeInfo();
 
@@ -28,7 +27,7 @@ export default function page({}: Props) {
     return <div className="flex flex-col justify-center items-center h-screen w-full bg-white">
       <h1 className="text-4xl font-bold text-gray-800 mb-4">Page Not Found</h1>
       <p className="text-lg text-gray-600 mb-6">
-        The page you're looking for does not exist or you don't have access.
+        {"The page you're looking for does not exist or you don't have access."}
       </p>
       <Link
         href={"/dashboard"}

@@ -7,12 +7,11 @@ import { useMutationData } from "./useMutationData";
 import { createDonation } from "@/actions/donation";
 import useZodForm from "./useZodForm";
 import { toast } from "./use-toast";
-import { useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import { useDonationContextHook } from "@/context/user-donation";
 
 export const useCreateDonationHook = (defaultData?: DefaultOptions) => {
-  const router = useRouter();
+  // const router = useRouter();
   const queryClient = useQueryClient();
   const { currentStep, setCurrentStep,setDonationId } = useDonationContextHook();
   const { mutate, isPending } = useMutationData(

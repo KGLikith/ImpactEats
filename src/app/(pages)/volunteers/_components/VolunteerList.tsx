@@ -8,7 +8,7 @@ import React, { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Phone, Mail, MapPin, ClipboardCheck } from 'lucide-react';
+import { Phone, Mail, MapPin } from 'lucide-react';
 import { toast } from "@/hooks/use-toast";
 
 type Props = {

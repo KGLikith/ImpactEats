@@ -4,7 +4,6 @@ import Donate from "@/components/icons/donate";
 import {
   Bell,
   Building2,
-  Group,
   History,
   LayoutDashboardIcon,
   User,
