@@ -89,8 +89,6 @@ export const updateTaskStatus = async (taskId: string, status: string) => {
         },
       });
 
-      console.log(donorHistory);
-
       if (donorHistory) {
         await client.history.update({
           where: {
@@ -101,7 +99,7 @@ export const updateTaskStatus = async (taskId: string, status: string) => {
             message: `Your donation has been recieved.Thank you for your help`,
             timing: `${
               donorHistory.timing
-            },Delivery Status updated to COMPLETED at ${new Date().toISOString()}`,
+            } Delivery Status updated to COMPLETED at ${new Date().toLocaleString()}.`,
           },
         });
       }
@@ -113,7 +111,6 @@ export const updateTaskStatus = async (taskId: string, status: string) => {
         },
       });
 
-      console.log(volunteerHistory);
       if (volunteerHistory) {
         const volu = await client.history.update({
           where: {
@@ -124,7 +121,7 @@ export const updateTaskStatus = async (taskId: string, status: string) => {
             message: `The donation has been completed and recieved by the donor`,
             timing: `${
               volunteerHistory.timing
-            },Delivery is completed at ${new Date().toISOString()}`,
+            } Delivery is completed at ${new Date().toLocaleString()}.`,
           },
         });
         console.log("vol", volu);
@@ -147,7 +144,7 @@ export const updateTaskStatus = async (taskId: string, status: string) => {
             message: `The donation has been completed`,
             timing: `${
               orgHistory.timing
-            },Delivery completed at ${new Date().toISOString()}`,
+            },Delivery completed at ${new Date().toLocaleString()}.`,
           },
         });
       }
@@ -204,7 +201,7 @@ export const updateTaskStatus = async (taskId: string, status: string) => {
             message: `Task status has been updated to ${status} for this donations`,
             timing: `${
               donorHistory.timing
-            },Delivery Status updated to ${status} at ${new Date().toISOString()}`,
+            },Delivery Status updated to ${status} at ${new Date().toLocaleString()}.`,
           },
         });
       }
@@ -226,7 +223,7 @@ export const updateTaskStatus = async (taskId: string, status: string) => {
             message: `Task status has been updated to ${status} for this donations`,
             timing: `${
               volunteerHistory.timing
-            },Delivery Status updated to ${status} at ${new Date().toISOString()}`,
+            },Delivery Status updated to ${status} at ${new Date().toLocaleString()}.`,
           },
         });
       }
@@ -248,13 +245,64 @@ export const updateTaskStatus = async (taskId: string, status: string) => {
             message: `Task status has been updated to ${status} for this donations`,
             timing: `${
               orgHistory.timing
-            },Delivery Status updated to ${status} at ${new Date().toISOString()}`,
+            },Delivery Status updated to ${status} at ${new Date().toLocaleString()}.`,
           },
         });
       }
     }
   } catch (err) {
     console.log("error in updating task status", (err as Error).message);
+    throw new Error((err as Error).message);
+  }
+};
+
+export const getCliamedDonations = async (volunteerId: string) => {
+  try {
+    const donations = await client.organisation.findMany({
+      where: {
+        AND: [{
+          claims: {
+            some: {
+              status: "CLAIMED",
+            },
+          },
+          volunteers: {
+            some: {
+              id: volunteerId,
+            },
+          },
+        }],
+      },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        phone: true,
+        claims: {
+          where: {
+            status: "CLAIMED",
+          },
+          select: {
+            id: true,
+            status: true,
+            donation: true,
+          },
+        },
+      },
+
+      orderBy: {
+        claims: {
+          _count: "desc",
+        },
+      },
+    });
+    console.log("donations", donations);
+    return {
+      status: 200,
+      data: donations,
+    };
+  } catch (err) {
+    console.log("error in getting claimed donations", (err as Error).message);
     throw new Error((err as Error).message);
   }
 };

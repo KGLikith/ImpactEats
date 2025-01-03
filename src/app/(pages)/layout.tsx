@@ -15,15 +15,20 @@ export default async function RootLayout({
   if (!authenticated?.user) {
     return null;
   }
-  
+  // const isProfileCompleted = authenticated.ProfileCompleted;
+
   return (
     <>
       <div className="flex h-screen w-full mb-20">
         <SideBar />
-        <div className="w-full h-screen flex flex-col pl-20 md:pl-4  overflow-y-auto no-scrollbar ">
-          <ProfileCompletedPage />
+        <div
+          className={`w-full h-screen flex flex-col pl-20 md:pl-4 overflow-y-auto no-scrollbar `}
+        >
+              <ProfileCompletedPage />
+
           {children}
         </div>
+        
       </div>
     </>
   );

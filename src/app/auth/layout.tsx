@@ -1,4 +1,5 @@
 import { currentUser } from "@clerk/nextjs/server";
+import Image from "next/image";
 // import Image from "next/image";
 import { redirect } from "next/navigation";
 import React from "react";
@@ -12,13 +13,12 @@ const Layout = async ({ children }: Props) => {
   // console.log(user)
   if (user) {
     redirect("/dashboard");
-
   }
   return (
     <div className="h-screen flex w-full justify-center bg-neutral-900">
       <div className="w-[600px] ld:w-full  flex flex-col items-start p-6">
         {/* <Image
-            src="/images/image.png"
+          src="/images/donaiton-page.png"
           alt="Impact Eats Logo"
           sizes="100vw"
           style={{
@@ -40,15 +40,18 @@ const Layout = async ({ children }: Props) => {
           Empower those in need and help reduce food waste. Together, we can
           make a difference!
         </p>
-        {/* <Image
-          src="/images/donation-ui.png"
+        <div className="flex justify-center items-center w-full h-full">
+
+        <Image
+          src="/images/donaiton-page.jpg"
           alt="Donation app interface"
           loading="lazy"
           sizes="30"
-          className="absolute shrink-0 !w-[1600px] top-56"
+          className="absolute shrink-0 w-[70%] h-[70%] top-56"
           width={0}
           height={0}
-        /> */}
+        />
+        </div>
       </div>
     </div>
   );

@@ -23,7 +23,7 @@ export default function ThankYouPage() {
           asChild
           className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded-lg"
         >
-          <Link href={`/donation/${DonationId}`}>View Donation Info</Link>
+          <Link href={`/donations/${DonationId}`}>View Donation Info</Link>
         </Button>
       </div>
     </div>

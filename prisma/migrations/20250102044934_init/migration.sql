@@ -132,7 +132,7 @@ CREATE TABLE "History" (
     "userId" TEXT NOT NULL,
     "action" TEXT NOT NULL,
     "header" TEXT NOT NULL,
-    "description" TEXT NOT NULL,
+    "description" TEXT,
     "message" TEXT NOT NULL,
     "donationId" TEXT,
     "timing" TEXT,
@@ -166,7 +166,6 @@ CREATE TABLE "Request" (
 CREATE TABLE "Claim" (
     "id" TEXT NOT NULL,
     "status" "ClaimStatus" NOT NULL DEFAULT 'CLAIMED',
-    "taskId" TEXT NOT NULL,
     "organisationId" TEXT NOT NULL,
     "donationId" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -182,6 +181,7 @@ CREATE TABLE "Task" (
     "status" "TaskStatus" NOT NULL DEFAULT 'PENDING',
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
+    "claimId" TEXT NOT NULL,
 
     CONSTRAINT "Task_pkey" PRIMARY KEY ("id")
 );
@@ -228,10 +228,10 @@ CREATE UNIQUE INDEX "Donor_userId_key" ON "Donor"("userId");
 CREATE INDEX "Donor_userId_id_idx" ON "Donor"("userId", "id");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Claim_taskId_key" ON "Claim"("taskId");
+CREATE UNIQUE INDEX "Claim_donationId_key" ON "Claim"("donationId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Claim_donationId_key" ON "Claim"("donationId");
+CREATE UNIQUE INDEX "Task_claimId_key" ON "Task"("claimId");
 
 -- CreateIndex
 CREATE INDEX "_OrganisationToVolunteer_B_index" ON "_OrganisationToVolunteer"("B");
@@ -246,10 +246,10 @@ ALTER TABLE "Volunteer" ADD CONSTRAINT "Volunteer_userId_fkey" FOREIGN KEY ("use
 ALTER TABLE "Donor" ADD CONSTRAINT "Donor_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Donation" ADD CONSTRAINT "Donation_donorId_fkey" FOREIGN KEY ("donorId") REFERENCES "Donor"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "Donation" ADD CONSTRAINT "Donation_donorId_fkey" FOREIGN KEY ("donorId") REFERENCES "Donor"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Donation" ADD CONSTRAINT "Donation_requestId_fkey" FOREIGN KEY ("requestId") REFERENCES "Request"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "Donation" ADD CONSTRAINT "Donation_requestId_fkey" FOREIGN KEY ("requestId") REFERENCES "Request"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Notification" ADD CONSTRAINT "Notification_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -258,13 +258,10 @@ ALTER TABLE "Notification" ADD CONSTRAINT "Notification_userId_fkey" FOREIGN KEY
 ALTER TABLE "History" ADD CONSTRAINT "History_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "History" ADD CONSTRAINT "History_donationId_fkey" FOREIGN KEY ("donationId") REFERENCES "Donation"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "History" ADD CONSTRAINT "History_donationId_fkey" FOREIGN KEY ("donationId") REFERENCES "Donation"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Request" ADD CONSTRAINT "Request_organisationId_fkey" FOREIGN KEY ("organisationId") REFERENCES "Organisation"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Claim" ADD CONSTRAINT "Claim_taskId_fkey" FOREIGN KEY ("taskId") REFERENCES "Task"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Claim" ADD CONSTRAINT "Claim_organisationId_fkey" FOREIGN KEY ("organisationId") REFERENCES "Organisation"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -274,6 +271,9 @@ ALTER TABLE "Claim" ADD CONSTRAINT "Claim_donationId_fkey" FOREIGN KEY ("donatio
 
 -- AddForeignKey
 ALTER TABLE "Task" ADD CONSTRAINT "Task_volunteerId_fkey" FOREIGN KEY ("volunteerId") REFERENCES "Volunteer"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Task" ADD CONSTRAINT "Task_claimId_fkey" FOREIGN KEY ("claimId") REFERENCES "Claim"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "_OrganisationToVolunteer" ADD CONSTRAINT "_OrganisationToVolunteer_A_fkey" FOREIGN KEY ("A") REFERENCES "Organisation"("id") ON DELETE CASCADE ON UPDATE CASCADE;

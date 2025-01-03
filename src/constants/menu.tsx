@@ -63,7 +63,7 @@ export const VOLUNTEER_SIDE_BAR_MENU: SIDE_BAR_MENU_PROPS[] = [
     path: "dashboard",
   },
   {
-    label: "Volunteer",
+    label: "Contribute",
     icon: <Delivery />,
     path: "volunteer",
   },

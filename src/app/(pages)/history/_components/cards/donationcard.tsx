@@ -17,7 +17,6 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { HistoryItem } from "../../HistoryList";
 import { Donor } from "../donor";
-import { Separator } from "@/components/ui/separator";
 
 type Props = {
   item: HistoryItem;
@@ -62,7 +61,7 @@ export default function Donationcard({ item, type }: Props) {
           </p>
           {item.timing && (
             <p className="mt-2 text-sm text-muted-foreground">
-              {item.timing?.split(",").map((part, index) => (
+              {item.timing?.split(".").map((part, index) => (
                 <React.Fragment key={index}>
                   {part}
                   {item.timing && index < item.timing.split(",")?.length - 1 && <br />}
@@ -74,7 +73,6 @@ export default function Donationcard({ item, type }: Props) {
 
         {type !== "Donor" && (
           <>
-          <Separator orientation="vertical" color="black" />
           <div className="mb-3">
             <h3 className="text-lg font-semibold mb-2">Donor</h3>
             {item.donation?.donor ? (

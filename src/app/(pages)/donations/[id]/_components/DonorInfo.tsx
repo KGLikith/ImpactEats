@@ -23,7 +23,7 @@ export default function DonorInfo({ donor }: Props) {
         </h2>
         <div className="flex items-center">
           <Avatar className="h-16 w-16">
-            {donor.imageUrl ? (
+            {donor?.imageUrl ? (
               <AvatarImage src={donor.imageUrl} alt={donor.name} />
             ) : (
               <AvatarFallback>{donor.name.charAt(0)}</AvatarFallback>

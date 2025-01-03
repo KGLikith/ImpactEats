@@ -48,14 +48,29 @@ export const onLoginUser = async () => {
         where: {
           clerkId: user.id,
         },
-        select: {
-          fullName: true,
-          id: true,
-          type: true,
-        },
+        include: {
+          Organisation: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+          Donor: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+          Volunteer: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        }
       });
       if (authenticated) {
-        return { status: 200, user: authenticated };
+        return { status: 200, user: authenticated, ProfileCompleted: authenticated.Donor || authenticated.Organisation || authenticated.Volunteer };
       }
     } catch (error) {
       console.log(error)

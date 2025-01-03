@@ -40,7 +40,6 @@ export const createDonation = async (data: DonationFormData) => {
       });
     }
     if (!user?.userId) return { status: 400, data: null };
-    console.log(user.userId);
     await client.notification.create({
       data: {
         type: "Donation",
@@ -53,6 +52,24 @@ export const createDonation = async (data: DonationFormData) => {
         isRead: false,
       },
     });
+    const organizations = await client.organisation.findMany({
+      select: {
+        id: true, // Ensure you fetch the organization's ID
+        userId: true,
+      },
+    });
+    await client.notification.createMany({
+      data: organizations.map((org) => ({
+        type: "Donation",
+        userId: org.userId,
+        header: "New Donation",
+        action: "Created",
+        message:
+          "A donation has been created. Would you like to claim it?",
+        link: `/donations/${res.id}`,
+        isRead: false,
+      })),
+    })
     await client.history.create({
       data: {
         type: "Donation",
@@ -66,7 +83,7 @@ export const createDonation = async (data: DonationFormData) => {
             : `You donated a ${data.name} for ${data.quantity} people`,
         message:
           "You created a donation and is waiting to be claimed by an organisation",
-        timing: `Donation form submitted on ${new Date().toLocaleString()} \n, `,
+        timing: `Donation form submitted on ${new Date().toLocaleString()}. \n `,
         link: `/donations/${res.id}`,
       },
     });
@@ -82,9 +99,6 @@ export const getDonationDetails = async (id: string) => {
     const data = await client.donation.findUnique({
       where: {
         id: id,
-        donor: {
-          isNot: null,
-        },
       },
       include: {
         donor: true,
@@ -127,7 +141,8 @@ export const getDonationDetails = async (id: string) => {
         },
       },
     });
-    if (!data) return { status: 404, data: null };
+    console.log(data)
+    if (!data) return { status: 404, data: [] };
     return { status: 200, data: data };
   } catch (err) {
     console.log("error in getting donation details", (err as Error).message);
@@ -138,31 +153,29 @@ export const getDonationDetails = async (id: string) => {
 export const getAllDonations = async () => {
   try {
     const currentDateTime = new Date();
-
+    const currentDate = currentDateTime.toLocaleDateString().split("T")[0];
+    const currentTime = currentDateTime.toLocaleTimeString().slice(0, 5);
+    console.log(currentDate, currentTime);
     const data = await client.donation.findMany({
       where: {
         status: "PENDING",
-        AND: [
-          {
-            OR: [
-              {
-                expiryDate: {
-                  lt: currentDateTime.toISOString().split("T")[0],
-                },
-              },
-              {
-                AND: [
-                  { expiryDate: currentDateTime.toISOString().split("T")[0] },
-                  {
-                    expiryTime: {
-                      lt: currentDateTime.toTimeString().slice(0, 5),
-                    },
-                  },
-                ],
-              },
-            ],
-          },
-        ],
+        // AND: [
+        //   {
+        //     OR: [
+        //       {
+        //         expiryDate: {
+        //           lt: currentDate,
+        //         },
+        //       },
+        //       {
+        //         AND: [
+        //           { expiryDate: currentDate },
+        //           { expiryTime: { lt: currentTime } },
+        //         ],
+        //       },
+        //     ],
+        //   },
+        // ],
       },
       include: {
         donor: true,
@@ -171,9 +184,10 @@ export const getAllDonations = async () => {
         createdAt: "asc",
       },
     });
+    console.log(data);
     return { status: 200, data: data };
   } catch (err) {
-    console.log(err)
+    console.log(err);
     return { status: 500, data: null };
   }
 };
@@ -182,7 +196,6 @@ export const handleClaimDonation = async (
   donationId: string,
   organisationId: string
 ) => {
-  console.log(donationId, organisationId);
   try {
     const res = await client.claim.create({
       data: {
@@ -195,6 +208,12 @@ export const handleClaimDonation = async (
           select: {
             name: true,
             userId: true,
+            volunteers: {
+              select:{
+                userId: true,
+                id:true
+              }
+            }
           },
         },
         donation: {
@@ -229,6 +248,18 @@ export const handleClaimDonation = async (
         isRead: false,
       },
     });
+    await client.notification.createMany({
+      data: res.organisation.volunteers.map((volunteer) => ({
+        type: "Donation",
+        userId: volunteer.userId,
+        header: "New Claim",
+        action: "Claimed",
+        message:
+          "A donation has been claimed by an organisation and is waiting for a volunteer to accept",
+        link: `/donations/${donationId}`,
+        isRead: false,
+      })),
+    });
     await client.history.create({
       data: {
         type: "Donation",
@@ -241,7 +272,7 @@ export const handleClaimDonation = async (
         }`,
         message:
           "You claimed a donation and is waiting for the volunteer to accept",
-        timing: `Claimed on ${new Date().toLocaleString()}, \n `,
+        timing: `Claimed on ${new Date().toLocaleString()}. \n `,
         link: `/donations/${donationId}`,
       },
     });
@@ -274,7 +305,7 @@ export const handleClaimDonation = async (
           message: `Your donation has been claimed by ${res.organisation?.name}`,
           timing: `${
             history?.timing || ""
-          } Claimed on ${new Date().toLocaleString()},\n`,
+          } Claimed on ${new Date().toLocaleString()}.\n`,
         },
       });
       console.log("notification sent to donor");
@@ -381,7 +412,7 @@ export const handleVolunteerForDonation = async (
         description: "You started volunteering for a donation",
         message:
           "You started volunteering for a donation and is waiting for the pickup",
-        timing: `Volunteering started on ${new Date().toLocaleString()} \n `,
+        timing: `Volunteering started on ${new Date().toLocaleString()}. \n `,
         link: `/donations/${donationId}`,
       },
     });
@@ -395,16 +426,16 @@ export const handleVolunteerForDonation = async (
     });
     await client.history.update({
       where: {
-        id: orgnaisationHistory?.id
+        id: orgnaisationHistory?.id,
       },
       data: {
         action: "Assigned",
         message: `${res.volunteer.name} started volunteering for this claim`,
         timing: `${
           orgnaisationHistory?.timing || ""
-        } Assigned on ${new Date().toLocaleString()},\n`,
-      }
-    })
+        } Assigned on ${new Date().toLocaleString()}.\n`,
+      },
+    });
     const donorHistory = await client.history.findFirst({
       where: {
         AND: [
@@ -415,19 +446,18 @@ export const handleVolunteerForDonation = async (
     });
     await client.history.update({
       where: {
-        id: donorHistory?.id
+        id: donorHistory?.id,
       },
       data: {
         action: "Assigned",
         message: `${res.volunteer.name} started volunteering for this donations`,
         timing: `${
           donorHistory?.timing || ""
-        } Assigned on ${new Date().toLocaleString()},\n`,
-      }
-    })
+        } Assigned on ${new Date().toLocaleString()}.\n`,
+      },
+    });
     return res;
   } catch (err) {
     throw new Error((err as Error).message);
   }
 };
-

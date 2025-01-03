@@ -1,2 +1,0 @@
--- AlterTable
-ALTER TABLE "Claim" ALTER COLUMN "taskId" DROP NOT NULL;

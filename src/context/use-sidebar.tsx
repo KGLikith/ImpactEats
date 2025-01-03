@@ -4,11 +4,11 @@ import { useState } from "react";
 import { useClerk } from "@clerk/nextjs";
 
 const useSideBar = () => {
-  const [expand, setExpand] = useState<boolean | undefined>(false);
+  const [expand, setExpand] = useState<boolean | undefined>(true);
   const router = useRouter();
   const pathname = usePathname();
 
-  const page = pathname.split("/")[1];
+  const page = pathname.split("/")[1].toLowerCase();;
   const { signOut } = useClerk();
 
   const onSignOut = () => signOut(() => router.push("/auth/sign-in"));

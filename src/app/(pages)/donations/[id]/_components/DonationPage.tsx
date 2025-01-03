@@ -72,8 +72,11 @@ export default function DonationPage({ donationId, userType }: Props) {
   const [donationData, setDonationData] =
     React.useState<DonationPageType | null>(null);
   const { data, isLoading } = useQueryData(["donation", donationId], () =>
-    getDonationDetails(donationId)
+     getDonationDetails(donationId)
   );
+  console.log("donorid",donationId)
+
+  console.log(data)
 
   useEffect(() => {
     if (data) {

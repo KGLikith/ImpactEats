@@ -1,6 +1,6 @@
 import React from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Building2 } from 'lucide-react';
+import {  User } from 'lucide-react';
 
 type OrganizationProps = {
   id: string;
@@ -15,7 +15,7 @@ export function Donor({ name, email, phone, imageUrl }: OrganizationProps) {
     <div className="flex flex-row items-start gap-4 w-full">
       <Avatar>
         <AvatarImage src={imageUrl} alt={name} />
-        <AvatarFallback><Building2 /></AvatarFallback>
+        <AvatarFallback><User /></AvatarFallback>
       </Avatar>
       <div>
         <h3 className="text-lg font-semibold">{name}</h3>

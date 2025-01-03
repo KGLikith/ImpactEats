@@ -26,7 +26,7 @@ export default function DonationsPage() {
   const { data, isLoading } = useQueryData(["all-donations"], getAllDonations);
   const [donationData, setDonationData] = useState<Donation[] | null>(null);
   const [sortOption, setSortOption] = useState("latest");
-
+  console.log(data)
   useEffect(() => {
     if (data) {
       const { data: fetchedData } = data as {
@@ -52,36 +52,45 @@ export default function DonationsPage() {
       </div>
     );
   }
+  console.log(donationData)
 
   return (
-    <div className="container mx-auto py-8">
-      <h1 className="text-3xl font-bold mb-6">All Donations</h1>
+    <>
+      <div className="container mx-auto py-8 h-full w-full">
+        <h1 className="text-3xl font-bold mb-6">All Donations</h1>
 
-      {/* Sort Dropdown */}
-      <div className="flex justify-end mb-4">
-        <Select
-          value={sortOption}
-          onValueChange={(value) => setSortOption(value)}
-        >
-          <SelectTrigger>
-            <SelectValue
-              placeholder="Select food type"
-              defaultValue={sortOption}
-            />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="latest">Latest to Oldest</SelectItem>
-            <SelectItem value="oldest">Oldest to Latest</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
+        {/* Sort Dropdown */}
+        <div className="flex justify-end mb-4 w-1/4">
+          <Select
+            value={sortOption}
+            onValueChange={(value) => setSortOption(value)}
+          >
+            <SelectTrigger>
+              <SelectValue
+                placeholder="Select food type"
+                defaultValue={sortOption}
+              />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="latest">Latest to Oldest</SelectItem>
+              <SelectItem value="oldest">Oldest to Latest</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
 
-      {/* Donation Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {donationData?.map((donation) => (
-          <DonationCard key={donation.id} donation={donation} />
-        ))}
+        {/* Donation Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {donationData?.map((donation) => (
+            <DonationCard key={donation.id} donation={donation} />
+          ))}
+        </div>
+        {donationData?.length === 0 && (
+        <div className="flex justify-center items-center w-full h-3/4">
+          <p className="text-lg text-center">No donations available</p>
+        </div>
+      )}
       </div>
-    </div>
+      
+    </>
   );
 }

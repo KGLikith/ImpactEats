@@ -13,7 +13,7 @@ type Props = {
 };
 
 const MenuItem = ({ size, path, icon, label, current, onSignOut }: Props) => {
-  // console.log(path, current)
+  // console.log(path === current);
   switch (size) {
     case "max":
       return (
@@ -23,8 +23,8 @@ const MenuItem = ({ size, path, icon, label, current, onSignOut }: Props) => {
             "flex items-center gap-2 px-1 py-2 rounded-lg my-1 hover:bg-zinc-50 ",
             !current
               ? "text-gray-500"
-              : current === path
-              ? "bg-white font-bold text-black"
+              : current === path?.toLowerCase()
+              ? "bg-white font-bold text-orange"
               : "text-gray-500"
           )}
           href={path ? `/${path}` : "#"}
@@ -40,9 +40,9 @@ const MenuItem = ({ size, path, icon, label, current, onSignOut }: Props) => {
               onClick={onSignOut}
               className={cn(
                 !current
-                  ? "text-gray-500"
-                  : current == path
-                  ? "bg-white font-bold text-black"
+                  ? "text-gray-500 "
+                  : current == path?.toLowerCase()
+                  ? " font-bold text-black bg-white"
                   : "text-gray-500",
                 "rounded-lg py-2 my-1"
               )}
