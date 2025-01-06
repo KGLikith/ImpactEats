@@ -103,7 +103,9 @@ export default function Organisations() {
             No Organizations Found
           </h1>
           <p className="text-gray-500 mt-2">
-            {"We're sorry, but we couldn't find any organizations. Please try again later."}
+            {
+              "We're sorry, but we couldn't find any organizations. Please try again later."
+            }
           </p>
         </div>
       </div>
@@ -117,7 +119,8 @@ export default function Organisations() {
       org.address.toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesVolunteerFilter =
-      !showVolunteerOnly || userType?.organisations?.find((o) => o.id === org.id);
+      !showVolunteerOnly ||
+      userType?.organisations?.find((o) => o.id === org.id);
 
     return matchesSearch && matchesVolunteerFilter;
   });
@@ -133,24 +136,26 @@ export default function Organisations() {
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
-        {userType?.type==="Volunteer" && <div className="flex items-center">
-          <input
-            type="checkbox"
-            id="volunteerFilter"
-            checked={showVolunteerOnly}
-            onChange={(e) => setShowVolunteerOnly(e.target.checked)}
-            className="mr-2"
-          />
-          <label htmlFor="volunteerFilter" className="text-gray-700">
-            Show the organizations you volunteer only
-          </label>
-        </div>}
+        {userType?.type === "Volunteer" && (
+          <div className="flex items-center">
+            <input
+              type="checkbox"
+              id="volunteerFilter"
+              checked={showVolunteerOnly}
+              onChange={(e) => setShowVolunteerOnly(e.target.checked)}
+              className="mr-2"
+            />
+            <label htmlFor="volunteerFilter" className="text-gray-700">
+              Show the organizations you volunteer only
+            </label>
+          </div>
+        )}
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
         {filteredOrganisations.map((org) => (
           <div
             key={org.id}
-            className="border rounded-lg p-6 hover:shadow-lg transition-shadow duration-300 flex flex-col h-full gap-4"
+            className="border rounded-lg p-6 hover:shadow-lg transition-shadow duration-300 flex flex-col justify-between h-full gap-4"
           >
             <Link href={`/organisations/${org.id}`}>
               <div className="flex items-center mb-4">
@@ -211,6 +216,8 @@ export default function Organisations() {
                 </div>
               )}
             </div>
+            <div className="flex flex-col justify-between">
+
             <div className="mt-4 flex justify-between text-sm text-gray-500">
               <span>Volunteers: {org._count.volunteers}</span>
               <span>Claims: {org._count.claims}</span>
@@ -256,6 +263,7 @@ export default function Organisations() {
                 Donate Now
               </Button>
             )}
+            </div>
           </div>
         ))}
         {filteredOrganisations.length === 0 && (
