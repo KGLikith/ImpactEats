@@ -40,7 +40,7 @@ export const useCreateDonationHook = (defaultData?: DefaultOptions) => {
       console.log(error);
       toast({
         title: "Error",
-        description: "An error occurred while creating donation",
+        description: "An error occurred while creating donation. Please try again later",
         duration: 2000,
       });
     }

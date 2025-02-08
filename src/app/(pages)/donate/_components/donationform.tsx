@@ -41,19 +41,6 @@ export default function DonationForm({
 }: Props) {
   const { setCurrentStep } = useDonationContextHook();
   const [error, setError] = React.useState<string | null>(null);
-  // const { form, onFormSubmit, isPending } = useCreateDonationHook({
-  //   address: donor.address,
-  //   email: donor.email,
-  //   type: type,
-  //   phone: donor.phone,
-  //   userType: userType,
-  //   donorId: donor.id,
-  //   requestId: requestId,
-  //   foodType: "RAW",
-  //   quantity: 1,
-  //   quantityUnit: "kg",
-  //   deliveryOption: "pickup",
-  // });
   const form = useFormContext();
 
   useEffect(() => {
@@ -70,7 +57,7 @@ export default function DonationForm({
   }, []);
 
   const {
-    formState: { errors },
+    formState: { errors,touchedFields },
   } = form;
 
   const quantityUnit = form.watch("quantityUnit");
@@ -207,7 +194,7 @@ export default function DonationForm({
                   donating(Small descripiton would be helpful)
                 </p>
                 <FormMessage>
-                  {form.formState.touchedFields[field.name] &&
+                  {touchedFields[field.name] &&
                     errors.foodType?.message?.toString()}
                 </FormMessage>
               </FormItem>

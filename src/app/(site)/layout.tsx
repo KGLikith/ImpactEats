@@ -1,5 +1,3 @@
-
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -7,7 +5,7 @@ export default function RootLayout({
 }>) {
   return (
     <div>
-        {children}
+      {children}
     </div>
   );
 }

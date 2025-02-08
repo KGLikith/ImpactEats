@@ -44,6 +44,7 @@ export const useSignUpForm = () => {
       console.log(error.errors[0].longMessage);
       toast({
         title: "Error",
+        variant: "destructive", 
         description: error.errors[0].longMessage,
         duration: 3000,
       });

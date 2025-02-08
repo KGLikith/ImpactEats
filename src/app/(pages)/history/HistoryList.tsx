@@ -107,52 +107,15 @@ export default function HistoryList({userType}:{userType: UserTypeInfo}) {
     <div className="container mx-auto p-4 space-y-4" >
       <h1 className="text-2xl font-bold mb-6">Activity History</h1>
       {HistoryData.map((item) => (
-        <>
+        <div key={item.id} className="w-full">
           {item.donation ? (
             <Donationcard key={item.id} item={item} type={userType.type} />
           ) : (
             <Normalcard key={item.id} item={item} />
           )}
-        </>
+
+        </div>
       ))}
     </div>
   );
 }
-
-            // <div key={item.id} className="flex flex-col gap-2">
-            //   <div className="flex flex-row items-center gap-4 pb-2">
-            //     <Avatar>
-            //       <AvatarImage
-            //         src={`https://api.dicebear.com/6.x/initials/svg?seed=${item.type}`}
-            //       />
-            //       <AvatarFallback>
-            //         <User />
-            //       </AvatarFallback>
-            //     </Avatar>
-            //     <div className="flex-1">
-            //       <h2 className="text-lg capitalize">{item.type}</h2>
-            //       <p className="text-sm text-muted-foreground">
-            //         {formatDate(item.updatedAt)}
-            //       </p>
-            //     </div>
-            //     {getActionIcon(item.type)}
-            //     {/* {item.donation && item.donation.status && (
-            //       <Badge className={getStatusColor(item.donation.status)}>
-            //         {item.donation.status}
-            //       </Badge>
-            //     )} */}
-            //   </div>
-            //   <div className="flex w-full h-full justify-between items-start gap-4">
-            //     <div>
-            //       <p>{item.description}</p>
-            //       <p className="mt-2 text-sm font-medium text-blue-600">
-            //         {item.message}
-            //       </p>
-            //       {item.timing && (
-            //         <p className="mt-2 text-sm text-muted-foreground">
-            //           {item.timing}
-            //         </p>
-            //       )}
-            //     </div>
-            //   </div>
-            // </div>

@@ -70,7 +70,7 @@ export default function Page() {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-full w-full">
+      <div className="flex justify-center items-center h-screen w-full">
         <Loader state color="black" />
       </div>
     );
@@ -112,8 +112,8 @@ export default function Page() {
 
   if (status !== 200) {
     return (
-      <div className="px-2 space-y-4  min-h-screen">
-        <div className="bg-white p-4 rounded-lg shadow-sm h-full w-full">
+      <div className="px-2 space-y-4 ">
+        <div className="bg-white p-4 rounded-lg shadow-sm h-screen w-full">
           <h1 className="text-2xl font-bold text-gray-800">Notifications</h1>
           <div className="h-full w-full flex justify-center items-center">
             No unread notifications

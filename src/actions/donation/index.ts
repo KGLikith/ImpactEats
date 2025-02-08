@@ -24,26 +24,22 @@ export const createDonation = async (data: DonationFormData) => {
         donorId: data.donorId ? data.donorId : null,
         requestId: data.requestId ? data.requestId : null,
       },
+      select: {
+        id: true,
+        donor: {
+          select: {
+            id: true,
+            userId: true,
+          },
+        },
+      },
     });
-    let user;
-    console.log(data.userType);
-    if (data.userType === "Donor") {
-      console.log(data.donorId);
-      user = await client.donor.findUnique({
-        where: {
-          id: data.donorId,
-        },
-        select: {
-          id: true,
-          userId: true,
-        },
-      });
-    }
-    if (!user?.userId) return { status: 400, data: null };
+
+    if (!res?.donor?.userId) return { status: 400, data: null };
     await client.notification.create({
       data: {
         type: "Donation",
-        userId: user.userId,
+        userId: res.donor.userId,
         header: "New Donation",
         action: "Created",
         message:
@@ -58,22 +54,23 @@ export const createDonation = async (data: DonationFormData) => {
         userId: true,
       },
     });
-    await client.notification.createMany({
-      data: organizations.map((org) => ({
-        type: "Donation",
-        userId: org.userId,
-        header: "New Donation",
-        action: "Created",
-        message:
-          "A donation has been created. Would you like to claim it?",
-        link: `/donations/${res.id}`,
-        isRead: false,
-      })),
-    })
+    client.notification
+      .createMany({
+        data: organizations.map((org) => ({
+          type: "Donation",
+          userId: org.userId,
+          header: "New Donation",
+          action: "Created",
+          message: "A donation has been created. Would you like to claim it?",
+          link: `/donations/${res.id}`,
+          isRead: false,
+        })),
+      })
+      .catch((err) => console.log(err));
     await client.history.create({
       data: {
         type: "Donation",
-        userId: user.userId,
+        userId: res.donor.userId,
         header: "Donation",
         action: "Created",
         donationId: res.id,
@@ -141,7 +138,7 @@ export const getDonationDetails = async (id: string) => {
         },
       },
     });
-    console.log(data)
+    console.log(data);
     if (!data) return { status: 404, data: [] };
     return { status: 200, data: data };
   } catch (err) {
@@ -209,11 +206,11 @@ export const handleClaimDonation = async (
             name: true,
             userId: true,
             volunteers: {
-              select:{
+              select: {
                 userId: true,
-                id:true
-              }
-            }
+                id: true,
+              },
+            },
           },
         },
         donation: {

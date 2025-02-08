@@ -24,9 +24,14 @@ export default async function RootLayout({
         <div
           className={`w-full h-screen flex flex-col pl-20 md:pl-4 overflow-y-auto no-scrollbar `}
         >
-          <ProfileCompletedPage />
+          <ProfileCompletedPage >
+            <div className="h-screen">
 
-          {children}
+              {children}
+            </div>
+
+          </ProfileCompletedPage>
+
         </div>
       </div>
     </>

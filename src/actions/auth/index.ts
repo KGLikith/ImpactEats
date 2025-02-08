@@ -29,6 +29,15 @@ export const onCompleteUserRegistration = async (
         type: true,
       },
     });
+    const notification = await client.notification.create({
+      data: {
+        userId: registered.id,
+        action: "Welcome",
+        header: "Welcome",
+        type: "info",
+        message: `Welcome to ImpactEats, we are glad to have you here. Please contribute to the community by ${type === 'Donor' ? 'donating the surplus food.' : type === 'Organisation' ? 'providing for others.' : 'volunteering to the donations.'}.`,
+      },
+    })
 
     if (registered) {
       return { status: 200, user: registered };

@@ -9,7 +9,7 @@ export async function GET(req: NextRequest) {
   if (!id || !type) {
     return NextResponse.json({ status: 400 });
   }
-  // console.log(id, type);
+  console.log(id,type)
 
   // WIP: Dynamically rendering these
   try {

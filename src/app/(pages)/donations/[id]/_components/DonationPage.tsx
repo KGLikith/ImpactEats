@@ -74,9 +74,6 @@ export default function DonationPage({ donationId, userType }: Props) {
   const { data, isLoading } = useQueryData(["donation", donationId], () =>
      getDonationDetails(donationId)
   );
-  console.log("donorid",donationId)
-
-  console.log(data)
 
   useEffect(() => {
     if (data) {
@@ -89,7 +86,7 @@ export default function DonationPage({ donationId, userType }: Props) {
 
   if (isLoading)
     return (
-      <div className="flex justify-center items-center h-full w-full bg-gray-100">
+      <div className="flex justify-center items-center h-screen w-full bg-gray-100">
         <Loader state color="blue" />
       </div>
     );
